@@ -1,9 +1,17 @@
 apply plugin: 'java'
 apply plugin: 'eclipse'
+apply plugin: 'jacoco'
+apply plugin: 'com.github.kt3k.coveralls'
 
-//apply plugin: 'application'
-//
-//mainClassName = 'hello.HelloWorld'
+buildscript {
+	repositories {
+		mavenCentral()
+	}
+
+	dependencies {
+		classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.4.0'
+	}
+}
 
 repositories {
 	mavenCentral()
@@ -14,13 +22,28 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 dependencies {
-	compile "joda-time:joda-time:2.2"
+	compile "com.google.guava:guava:$guavaVersion"
 
 	testCompile "junit:junit:$junitVersion"
 	testCompile "org.mockito:mockito-core:$mockitoVersion"
 }
 
+jacoco {
+	toolVersion = jacocoVersion
+}
+
+jacocoTestReport {
+	reports {
+		xml.enabled = true
+		html.enabled = true
+	}
+}
+
 jar {
 	baseName = 'mocabogaso'
 	version = '0.1.0'
+}
+
+tasks.coveralls {
+	
 }
