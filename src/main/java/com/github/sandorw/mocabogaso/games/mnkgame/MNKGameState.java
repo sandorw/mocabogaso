@@ -176,18 +176,18 @@ public class MNKGameState implements GameState<DefaultGameMove,DefaultGameResult
 
     @Override
     public String toString() {
-        String returnString = "";
+    	StringBuilder stringBuilder = new StringBuilder();
         for (int i=numRows-1; i >= 0; --i) {
             for (int j=0; j < numCols; ++j)
-                returnString += boardLocationStatus[i][j].toString();
-            returnString += "\n";
+                stringBuilder.append(boardLocationStatus[i][j].toString());
+            stringBuilder.append("\n");
         }
         for (int i=0; i < numCols; ++i)
-            returnString += i;
-        returnString += "\n";
-        returnString += "Next player: " + currentPlayer;
-        returnString += "\n";
-        return returnString;
+            stringBuilder.append(i);
+        stringBuilder.append("\n");
+        stringBuilder.append("Next player: ").append(currentPlayer);
+        stringBuilder.append("\n");
+        return stringBuilder.toString();
     }
 
     @Override
