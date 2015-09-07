@@ -5,6 +5,7 @@ import com.github.sandorw.mocabogaso.games.GameResult;
 import com.github.sandorw.mocabogaso.games.GameState;
 import com.google.common.collect.Lists;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Search Tree for Monte Carlo Tree Search
@@ -75,7 +76,7 @@ public final class MonteCarloSearchTree<GM extends GameMove,
     }
 
     private SearchTreeNode advanceGameStateToLeafNode(GS gameState) {
-        //This special function is run to avoid applying the rootNode's move
+        //This special function is run to avoid applying the rootNode's move (null)
         SearchTreeNode explorationNode = rootNode.getNextNodeToExplore();
         if (explorationNode == null)
             return rootNode;
@@ -88,7 +89,7 @@ public final class MonteCarloSearchTree<GM extends GameMove,
 
     private final class SearchTreeNode {
         private final GM appliedMove;
-        private volatile int nodeDepth;
+        private AtomicInteger nodeDepth;
         private volatile NodeResults<GM,GR> nodeResults;
         private volatile SearchTreeNode parentNode;
         private volatile List<SearchTreeNode> childNodes;
@@ -96,7 +97,7 @@ public final class MonteCarloSearchTree<GM extends GameMove,
 
         public SearchTreeNode(GM m, int depth, SearchTreeNode parent, GS previousGameState) {
             appliedMove = m;
-            nodeDepth = depth;
+            nodeDepth = new AtomicInteger(depth);
             parentNode = parent;
             nodeResults = nodeResultsFactory.getNewNodeResults(m, previousGameState);
             childNodes = Lists.newArrayList();
@@ -104,7 +105,7 @@ public final class MonteCarloSearchTree<GM extends GameMove,
         }
 
         public void maybeExpandNode(GS gameState) {
-            if ((nodeResults.getNumSimulations() >= NODE_EXPAND_THRESHOLD) && (nodeDepth < MAX_NODE_DEPTH))
+            if ((nodeResults.getNumSimulations() >= NODE_EXPAND_THRESHOLD) && (nodeDepth.get() < MAX_NODE_DEPTH))
                 expandNode(gameState);
         }
 
@@ -112,7 +113,7 @@ public final class MonteCarloSearchTree<GM extends GameMove,
             if (gameState.isGameOver() || expanded)
                 return;
             for (GM move : gameState.getAllValidMoves())
-                childNodes.add(new SearchTreeNode(move, nodeDepth+1, this, gameState));
+                childNodes.add(new SearchTreeNode(move, nodeDepth.get()+1, this, gameState));
             expanded = true;
         }
 
@@ -141,7 +142,7 @@ public final class MonteCarloSearchTree<GM extends GameMove,
         }
 
         public void decrementTreeDepth() {
-            --nodeDepth;
+            nodeDepth.decrementAndGet();
             if (!expanded)
                 return;
             for (SearchTreeNode childNode : childNodes)

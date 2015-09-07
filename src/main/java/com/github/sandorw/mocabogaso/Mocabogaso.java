@@ -21,39 +21,6 @@ public class Mocabogaso {
 
     public static void main(String[] args) {
 
-        /*
-        TicTacToeGameState initialGameState = new TicTacToeGameState();
-        PlayoutPolicy<DefaultGameMove, DefaultGameResult, TicTacToeGameState> ticTacToePlayoutPolicy = new RandomMovePlayoutPolicy<>();
-        NodeResultsFactory<DefaultGameMove, DefaultGameResult, TicTacToeGameState,
-                           DefaultNodeResults<DefaultGameMove, DefaultGameResult>> nodeResultsFactory
-                           = new DefaultNodeResultsFactory<>();
-
-        Player<DefaultGameMove, TicTacToeGameState> playerX = new AIPlayer<>(ticTacToePlayoutPolicy, nodeResultsFactory, 1.0f);
-        Player<DefaultGameMove, TicTacToeGameState> playerO = new AIPlayer<>(ticTacToePlayoutPolicy, nodeResultsFactory, 1.0f);
-
-        Game<DefaultGameMove,TicTacToeGameState> ticTacToeGame = new Game<>(initialGameState);
-        ticTacToeGame.addPlayer("X", playerX);
-        ticTacToeGame.addPlayer("O", playerO);
-        ticTacToeGame.playGame();
-        */
-
-        /*
-        MNKGameState initialGameState = new MNKGameState(3,3,3);
-        PlayoutPolicy<DefaultGameMove, DefaultGameResult, MNKGameState> mNKPlayoutPolicy = new RandomMovePlayoutPolicy<>();
-        NodeResultsFactory<DefaultGameMove, DefaultGameResult, MNKGameState, DefaultNodeResults<DefaultGameMove, DefaultGameResult>> nodeResultsFactory
-            = new DefaultNodeResultsFactory<>();
-
-        Player<DefaultGameMove, MNKGameState> playerX = new AIPlayer<>(mNKPlayoutPolicy, nodeResultsFactory, 1.0f);
-        Player<DefaultGameMove, MNKGameState> playerO = new AIPlayer<>(mNKPlayoutPolicy, nodeResultsFactory, 1.0f);
-        Player<DefaultGameMove, MNKGameState> humanPlayer = new HumanPlayer<>();
-
-        Game<DefaultGameMove,MNKGameState> MNKGame = new Game<>(initialGameState);
-        MNKGame.addPlayer("X", playerX);
-        MNKGame.addPlayer("O", playerO);
-        //MNKGame.addPlayer("O", humanPlayer);
-        MNKGame.playGame();
-         */
-
         int numGames=0, numXWins=0, numOWins=0;
         for (int i=0; i < 1; ++i) {
             ConnectXGameState initialGameState = new ConnectXGameState(6,7,4);

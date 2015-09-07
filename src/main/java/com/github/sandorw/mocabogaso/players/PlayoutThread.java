@@ -1,5 +1,7 @@
 package com.github.sandorw.mocabogaso.players;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 import com.github.sandorw.mocabogaso.ai.mcts.MonteCarloSearchTree;
 import com.github.sandorw.mocabogaso.ai.mcts.NodeResults;
 import com.github.sandorw.mocabogaso.ai.mcts.PlayoutPolicy;
@@ -21,14 +23,14 @@ public class PlayoutThread<GM extends GameMove,
     private volatile GS startingGameState;
     private volatile boolean paused;
     private volatile boolean cancelled;
-    private volatile int numSimulations;
+    private AtomicInteger numSimulations;
 
     public PlayoutThread(PlayoutPolicy<GM,GR,GS> policy, MonteCarloSearchTree<GM,GR,GS,NR> tree) {
         playoutPolicy = policy;
         searchTree = tree;
         startingGameState = null;
         paused = true;
-        numSimulations = 0;
+        numSimulations = new AtomicInteger(0);
     }
 
     @Override
@@ -36,7 +38,7 @@ public class PlayoutThread<GM extends GameMove,
         while (!cancelled) {
             if (!paused) {
                 searchTree.playSimulationGame((GS) startingGameState.getCopy(), playoutPolicy);
-                ++numSimulations;
+                numSimulations.incrementAndGet();
             } else {
                 try {
                     Thread.sleep(500);
@@ -52,7 +54,7 @@ public class PlayoutThread<GM extends GameMove,
     }
 
     public void unpause() {
-        numSimulations = 0;
+        numSimulations.set(0);
         paused = false;
     }
 
@@ -65,7 +67,7 @@ public class PlayoutThread<GM extends GameMove,
     }
 
     public int getNumSimulations() {
-        return numSimulations;
+        return numSimulations.get();
     }
 
 }
