@@ -40,11 +40,17 @@ jacocoTestReport {
 	}
 }
 
+afterEvaluate {
+	coveralls {
+		jacocoReportPath = "${buildDir}/reports/jacoco/test/jacocoTestReport.xml"
+	}
+}
+
 jar {
 	baseName = 'mocabogaso'
 	version = '0.1.0'
 }
 
 tasks.coveralls {
-	
+	dependsOn tasks.jacocoTestReport
 }
