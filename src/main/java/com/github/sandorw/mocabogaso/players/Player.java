@@ -4,19 +4,10 @@ import com.github.sandorw.mocabogaso.games.GameMove;
 import com.github.sandorw.mocabogaso.games.GameResult;
 import com.github.sandorw.mocabogaso.games.GameState;
 
-/**
- *
- *
- * @author sandorw
- */
-public interface Player<GM extends GameMove, GS extends GameState<GM,? extends GameResult>> {
+public interface Player {
 
-    public void initialize(GS gameState);
-
-    public GM chooseMove(GS gameState);
-
-    public void informOfMove(GM move, GS resultingGameState);
-
-    public void terminate();
-
+	<GM extends GameMove, GS extends GameState<GM, ? extends GameResult>> GM chooseNextMove(GS currentGameState);
+	
+	<GM extends GameMove> void informOfMoveMade(GM move);
+	
 }
