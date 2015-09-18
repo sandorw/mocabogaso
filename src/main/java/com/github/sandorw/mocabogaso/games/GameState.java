@@ -3,7 +3,7 @@ package com.github.sandorw.mocabogaso.games;
 import java.util.List;
 
 /**
- *
+ * This represents all state relevant to a given game.
  *
  * @author sandorw
  */
@@ -22,10 +22,6 @@ public interface GameState<GM extends GameMove, GR extends GameResult> {
     public boolean isValidMove(GM move);
 
     public  void applyMove(GM move);
-
-    public  void setIsPlayout();
-
-    public  boolean isPlayoutOver();
 
     public  boolean isGameOver();
 
