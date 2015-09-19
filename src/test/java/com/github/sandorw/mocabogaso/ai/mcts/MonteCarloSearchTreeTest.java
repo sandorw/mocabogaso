@@ -31,17 +31,18 @@ public final class MonteCarloSearchTreeTest {
 	@SuppressWarnings("unchecked")
 	@Before
 	public void before() {
+	    badMockedMove = mock(GameMove.class);
+        goodMockedMove = mock(GameMove.class);
+        List<GameMove> moveList = Lists.newArrayList();
+        moveList.add(badMockedMove);
+        moveList.add(goodMockedMove);
+        
+        mockedGameState = (GameState<GameMove,GameResult>) mock(GameState.class);
+        when(mockedGameState.getAllValidMoves()).thenReturn(moveList);
+        when(mockedGameState.isGameOver()).thenReturn(false);
+        when(mockedGameState.getCopy()).thenReturn(mockedGameState);
+        
 		NodeResultsService<NodeResults> mockedNodeResultsService = (NodeResultsService<NodeResults>) mock(NodeResultsService.class);
-		searchTree = new MonteCarloSearchTree(mockedNodeResultsService);
-		badMockedMove = mock(GameMove.class);
-		goodMockedMove = mock(GameMove.class);
-		List<GameMove> moveList = Lists.newArrayList();
-		moveList.add(badMockedMove);
-		moveList.add(goodMockedMove);
-		mockedGameState = (GameState<GameMove,GameResult>) mock(GameState.class);
-		when(mockedGameState.getAllValidMoves()).thenReturn(moveList);
-		when(mockedGameState.isGameOver()).thenReturn(false);
-		when(mockedGameState.getCopy()).thenReturn(mockedGameState);
 		NodeResults badMockedResults = mock(NodeResults.class);
 		NodeResults goodMockedResults = mock(NodeResults.class);
 		NodeResults rootMockedResults = mock(NodeResults.class);
@@ -49,15 +50,18 @@ public final class MonteCarloSearchTreeTest {
 		when(badMockedResults.getNumSimulations()).thenReturn(1);
 		when(goodMockedResults.getValue()).thenReturn(1.0f);
 		when(goodMockedResults.getNumSimulations()).thenReturn(2);
+		when(rootMockedResults.getValue()).thenReturn(0.0f);
 		when(rootMockedResults.getNumSimulations()).thenReturn(3);
 		when(mockedNodeResultsService.getNewNodeResults(eq(badMockedMove), any())).thenReturn(badMockedResults);
 		when(mockedNodeResultsService.getNewNodeResults(eq(goodMockedMove), any())).thenReturn(goodMockedResults);
 		when(mockedNodeResultsService.getNewNodeResults(eq(null), any())).thenReturn(rootMockedResults);
+
+		searchTree = new MonteCarloSearchTree(mockedNodeResultsService);
 		searchTree.initialize(mockedGameState);
 	}
 	
 	@Test
-	public void iteratorHasNextTest() {
+	public void iteratorAtEndHasNextTest() {
 		SearchTreeIterator it = searchTree.iterator();
 		assert(it.hasNext());
 		it.next();
@@ -65,7 +69,7 @@ public final class MonteCarloSearchTreeTest {
 	}
 	
 	@Test
-	public void iteratorPreviousTest() {
+	public void iteratorHasPreviousTest() {
 		SearchTreeIterator it = searchTree.iterator();
 		assert(!it.hasPrevious());
 		it.next();
@@ -88,14 +92,24 @@ public final class MonteCarloSearchTreeTest {
 	}
 	
 	@Test
-	public void iteratorNextAndPreviousTest() {
+	public void iteratorReturnToRootTest() {
+	    expandLeafNodeWithMockedGameState();
+	    SearchTreeIterator it = searchTree.iterator();
+	    it.next();
+	    SearchTreeNode rootNode = it.previous();
+	    assertNull(rootNode.getAppliedMove());
+	    assertFalse(it.hasPrevious());
+	}
+	
+	@Test
+	public void iteratorPreviousFromEndTest() {
+	    expandLeafNodeWithMockedGameState();
 		SearchTreeIterator it = searchTree.iterator();
 		it.next();
-		it.previous();
 		it.next();
-		it.previous();
-		assertTrue(it.hasNext());
-		assertFalse(it.hasPrevious());
+		assertTrue(it.hasPrevious());
+		SearchTreeNode goodMoveNode = it.previous();
+		assertEquals(goodMoveNode.getAppliedMove(), goodMockedMove);
 	}
 	
 	@Test
@@ -118,6 +132,7 @@ public final class MonteCarloSearchTreeTest {
 		searchTree.setMaxNodeDepth(1);
 		searchTree.setNodeExpandThreshold(1);
 		expandLeafNodeWithMockedGameState();
+		// Should not expand due to max depth restriction
 		expandLeafNodeWithMockedGameState();
 		SearchTreeIterator it = searchTree.iterator();
 		it.next();
@@ -129,6 +144,7 @@ public final class MonteCarloSearchTreeTest {
 	public void doNotExpandUnderThresholdTest() {
 		searchTree.setNodeExpandThreshold(3);
 		expandLeafNodeWithMockedGameState();
+		// Should not expand due to node expand threshold
 		expandLeafNodeWithMockedGameState();
 		SearchTreeIterator it = searchTree.iterator();
 		it.next();
@@ -171,6 +187,12 @@ public final class MonteCarloSearchTreeTest {
 		it.next();
 		SearchTreeNode badMoveNode = it.next();
 		assertEquals(badMoveNode.getAppliedMove(),badMockedMove);
+	}
+	
+	@Test
+	public void rootNodeExplorationValueTest() {
+	    SearchTreeNode rootNode = searchTree.iterator().next();
+	    assertEquals(rootNode.getNodeValue(), 0.0f, 0.001f);
 	}
     
 	void expandLeafNodeWithMockedGameState() {
