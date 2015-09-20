@@ -9,6 +9,11 @@ import com.github.sandorw.mocabogaso.games.GameResult;
 import com.github.sandorw.mocabogaso.games.GameState;
 import com.google.common.collect.Lists;
 
+/**
+ * Representation of a move played in a game. This is a delta between GameStates.
+ *
+ * @author sandorw
+ */
 public final class MonteCarloSearchTree {
 	private volatile SearchTreeNode rootNode;
 	private volatile int MAX_NODE_DEPTH = 10;
@@ -16,12 +21,10 @@ public final class MonteCarloSearchTree {
     private volatile float EXPLORATION_CONSTANT = 1.0f;
 	private final NodeResultsService<? extends NodeResults> nodeResultsService;
 	
-	public MonteCarloSearchTree(NodeResultsService<? extends NodeResults> nrService) {
+	public MonteCarloSearchTree(NodeResultsService<? extends NodeResults> nrService,
+	        GameState<? extends GameMove, ? extends GameResult> initialGameState) {
 		rootNode = null;
 		nodeResultsService = nrService;
-	}
-	
-	public void initialize(GameState<? extends GameMove, ? extends GameResult> initialGameState) {
 		rootNode = new SearchTreeNode(null, 0, null, initialGameState);
 	}
 	

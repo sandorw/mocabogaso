@@ -56,8 +56,7 @@ public final class MonteCarloSearchTreeTest {
 		when(mockedNodeResultsService.getNewNodeResults(eq(goodMockedMove), any())).thenReturn(goodMockedResults);
 		when(mockedNodeResultsService.getNewNodeResults(eq(null), any())).thenReturn(rootMockedResults);
 
-		searchTree = new MonteCarloSearchTree(mockedNodeResultsService);
-		searchTree.initialize(mockedGameState);
+		searchTree = new MonteCarloSearchTree(mockedNodeResultsService, mockedGameState);
 	}
 	
 	@Test
