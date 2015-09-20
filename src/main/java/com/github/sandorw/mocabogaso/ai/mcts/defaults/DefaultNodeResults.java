@@ -4,6 +4,11 @@ import com.github.sandorw.mocabogaso.ai.mcts.NodeResults;
 import com.github.sandorw.mocabogaso.games.GameMove;
 import com.github.sandorw.mocabogaso.games.GameResult;
 
+/**
+ * Default NodeResults implementation, tracking the number of simulations and wins.
+ *
+ * @author sandorw
+ */
 public final class DefaultNodeResults implements NodeResults {
     private int numWins;
     private int numSimulations;

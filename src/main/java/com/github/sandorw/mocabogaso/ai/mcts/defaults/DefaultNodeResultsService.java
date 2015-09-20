@@ -7,6 +7,11 @@ import com.github.sandorw.mocabogaso.games.GameMove;
 import com.github.sandorw.mocabogaso.games.GameResult;
 import com.github.sandorw.mocabogaso.games.GameState;
 
+/**
+ * Default NodeResultsService that works with DefaultNodeResults.
+ *
+ * @author sandorw
+ */
 public final class DefaultNodeResultsService implements NodeResultsService<DefaultNodeResults> {
 
     @Override

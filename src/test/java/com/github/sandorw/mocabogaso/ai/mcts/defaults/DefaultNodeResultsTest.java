@@ -9,6 +9,11 @@ import org.junit.Test;
 import com.github.sandorw.mocabogaso.games.GameMove;
 import com.github.sandorw.mocabogaso.games.GameResult;
 
+/**
+ * Test cases for DefaultNodeResults.
+ *
+ * @author sandorw
+ */
 public class DefaultNodeResultsTest {
 
     DefaultNodeResults nodeResults;

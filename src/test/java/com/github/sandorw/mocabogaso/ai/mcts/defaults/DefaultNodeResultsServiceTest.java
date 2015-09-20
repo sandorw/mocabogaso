@@ -11,6 +11,11 @@ import com.github.sandorw.mocabogaso.ai.mcts.MonteCarloSearchTree.SearchTreeIter
 import com.github.sandorw.mocabogaso.games.GameMove;
 import com.github.sandorw.mocabogaso.games.GameResult;
 
+/**
+ * Test cases for DefaultNodeResultsService.
+ *
+ * @author sandorw
+ */
 public class DefaultNodeResultsServiceTest {
 
     DefaultNodeResultsService nodeResultsService;

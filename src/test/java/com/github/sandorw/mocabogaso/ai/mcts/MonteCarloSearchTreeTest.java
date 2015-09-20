@@ -17,6 +17,11 @@ import com.github.sandorw.mocabogaso.games.GameResult;
 import com.github.sandorw.mocabogaso.games.GameState;
 import com.google.common.collect.Lists;
 
+/**
+ * Test cases for MonteCarloSearchTree.
+ *
+ * @author sandorw
+ */
 public final class MonteCarloSearchTreeTest {
 	
 	MonteCarloSearchTree<GameMove> searchTree;
