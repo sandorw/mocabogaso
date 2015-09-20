@@ -10,7 +10,9 @@ import com.github.sandorw.mocabogaso.games.GameState;
 import com.google.common.collect.Lists;
 
 /**
- * Representation of a move played in a game. This is a delta between GameStates.
+ * Search tree of moves under consideration. Tracks the success of simulated games resulting from each
+ * move via NodeResults created by the NodeResultsService that is passed in. Use the iterator method
+ * to retrieve a SearchTreeIterator used to access SearchTreeNodes.
  *
  * @author sandorw
  */
@@ -75,6 +77,12 @@ public final class MonteCarloSearchTree {
 		EXPLORATION_CONSTANT = explorationConstant;
 	}
 	
+	/**
+	 * Individual node within the search tree. Contains the move to be applied at the node as well
+	 * as the NodeResults containing information about the success rate of the move. 
+	 *
+	 * @author sandorw
+	 */
 	public final class SearchTreeNode {
 		private final GameMove appliedMove;
 		private volatile SearchTreeNode parentNode;
@@ -138,6 +146,13 @@ public final class MonteCarloSearchTree {
         }
 	}
 	
+	/**
+	 * Iterator for moving through the search tree. Can move forward (deeper) and backwards (toward
+	 * the root node). When moving forward, the iterator moves to the child node with the highest
+	 * node value (the move that should be explored in the next simulated game).
+	 *
+	 * @author sandorw
+	 */
 	public static final class SearchTreeIterator implements Iterator<SearchTreeNode> {
 		private boolean atEnd;
 		private SearchTreeNode nextNode;

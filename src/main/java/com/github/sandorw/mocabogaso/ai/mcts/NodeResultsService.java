@@ -5,6 +5,12 @@ import com.github.sandorw.mocabogaso.games.GameMove;
 import com.github.sandorw.mocabogaso.games.GameResult;
 import com.github.sandorw.mocabogaso.games.GameState;
 
+/**
+ * Interface representing a service for interacting with NodeResults. Creates new instances for the
+ * search tree and walks the tree to apply the results of simulated games.
+ *
+ * @author sandorw
+ */
 public interface NodeResultsService<NR extends NodeResults> {
 	
 	//TODO

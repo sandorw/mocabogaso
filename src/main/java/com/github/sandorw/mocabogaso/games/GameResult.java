@@ -7,8 +7,8 @@ package com.github.sandorw.mocabogaso.games;
  */
 public interface GameResult {
 
-    public boolean isTie();
+    boolean isTie();
 
-    public String getWinningPlayer();
+    String getWinningPlayer();
 
 }
