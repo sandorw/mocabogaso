@@ -91,7 +91,7 @@ public final class MonteCarloSearchTree<GM extends GameMove> {
 		private final NodeResults nodeResults;
         private final int nodeDepth;
          
-        public <GS extends GameState<GM, ? extends GameResult>> 
+        public <GS extends GameState<GM, ? extends GameResult>>
         		SearchTreeNode(GM appliedMove, int depth, SearchTreeNode parent, GS resultingGameState) {
         	this.appliedMove = appliedMove;
         	parentNode = parent;
@@ -101,16 +101,12 @@ public final class MonteCarloSearchTree<GM extends GameMove> {
         	nodeDepth = depth;
         }
         
-        public GM getAppliedMove() {
-        	return appliedMove;
-        }
-        
-        public NodeResults getNodeResults() {
-        	return nodeResults;
+        public void applyGameResultFromSimulation(GameResult gameResult) {
+            nodeResults.applyGameResult(gameResult, appliedMove);
         }
         
         public float getNodeValue() {
-        	return nodeResults.getValue() + getNodeExplorationValue();
+            return nodeResults.getValue() + getNodeExplorationValue();
         }
         
         private float getNodeExplorationValue() {
@@ -119,7 +115,7 @@ public final class MonteCarloSearchTree<GM extends GameMove> {
             int parentSimulations = parentNode.getNumSimulations();
             return EXPLORATION_CONSTANT*(float)Math.sqrt(Math.log(parentSimulations+1)/(getNumSimulations()+1));
         }
-        
+
         public int getNumSimulations() {
             return nodeResults.getNumSimulations();
         }
@@ -139,6 +135,10 @@ public final class MonteCarloSearchTree<GM extends GameMove> {
         
         private int getNodeDepth() {
             return nodeDepth - rootNode.nodeDepth;
+        }
+        
+        public GM getAppliedMove() {
+            return appliedMove;
         }
         
         public void removeParentNode() {

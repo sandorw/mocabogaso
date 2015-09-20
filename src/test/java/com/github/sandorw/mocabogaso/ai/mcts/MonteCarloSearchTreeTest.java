@@ -179,8 +179,8 @@ public final class MonteCarloSearchTreeTest {
 	    SearchTreeIterator<GameMove> it = searchTree.iterator();
 	    MonteCarloSearchTree<GameMove>.SearchTreeNode rootNode = it.next();
 	    MonteCarloSearchTree<GameMove>.SearchTreeNode goodMoveNode = it.next();
-		when(rootNode.getNodeResults().getNumSimulations()).thenReturn(100000001);
-		when(goodMoveNode.getNodeResults().getNumSimulations()).thenReturn(100000000);
+		when(rootNode.getNumSimulations()).thenReturn(100000001);
+		when(goodMoveNode.getNumSimulations()).thenReturn(100000000);
 		it = searchTree.iterator();
 		it.next();
 		MonteCarloSearchTree<GameMove>.SearchTreeNode badMoveNode = it.next();
