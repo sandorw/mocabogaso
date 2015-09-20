@@ -9,6 +9,13 @@ import com.github.sandorw.mocabogaso.games.GameResult;
 import com.github.sandorw.mocabogaso.games.GameState;
 import com.google.common.collect.Lists;
 
+/**
+ * Search tree of moves under consideration. Tracks the success of simulated games resulting from each
+ * move via NodeResults created by the NodeResultsService that is passed in. Use the iterator method
+ * to retrieve a SearchTreeIterator used to access SearchTreeNodes.
+ *
+ * @author sandorw
+ */
 public final class MonteCarloSearchTree {
 	private volatile SearchTreeNode rootNode;
 	private volatile int MAX_NODE_DEPTH = 10;
@@ -16,12 +23,10 @@ public final class MonteCarloSearchTree {
     private volatile float EXPLORATION_CONSTANT = 1.0f;
 	private final NodeResultsService<? extends NodeResults> nodeResultsService;
 	
-	public MonteCarloSearchTree(NodeResultsService<? extends NodeResults> nrService) {
+	public MonteCarloSearchTree(NodeResultsService<? extends NodeResults> nrService,
+	        GameState<? extends GameMove, ? extends GameResult> initialGameState) {
 		rootNode = null;
 		nodeResultsService = nrService;
-	}
-	
-	public void initialize(GameState<? extends GameMove, ? extends GameResult> initialGameState) {
 		rootNode = new SearchTreeNode(null, 0, null, initialGameState);
 	}
 	
@@ -31,7 +36,7 @@ public final class MonteCarloSearchTree {
 		GameMove mostSimulatedMove = null;
 		int mostSimulations = -1;
 		for (SearchTreeNode childNode : rootNode.childNodes) {
-			int childSimulations = childNode.nodeResults.getNumSimulations();
+			int childSimulations = childNode.getNumSimulations();
 			if (childSimulations > mostSimulations) {
 				mostSimulations = childSimulations;
 				mostSimulatedMove = childNode.appliedMove;
@@ -46,6 +51,7 @@ public final class MonteCarloSearchTree {
 			for (SearchTreeNode childNode : rootNode.childNodes)
 				if (childNode.getAppliedMove().equals(move)) {
 					newRoot = childNode;
+					newRoot.removeParentNode();
 					break;
 				}
 		if (newRoot == null)
@@ -71,12 +77,18 @@ public final class MonteCarloSearchTree {
 		EXPLORATION_CONSTANT = explorationConstant;
 	}
 	
+	/**
+	 * Individual node within the search tree. Contains the move to be applied at the node as well
+	 * as the NodeResults containing information about the success rate of the move. 
+	 *
+	 * @author sandorw
+	 */
 	public final class SearchTreeNode {
 		private final GameMove appliedMove;
 		private volatile SearchTreeNode parentNode;
 		private volatile boolean expanded;
 		private volatile List<SearchTreeNode> childNodes;
-		private volatile NodeResults nodeResults;
+		private final NodeResults nodeResults;
         private final int nodeDepth;
          
         public <GM extends GameMove, GS extends GameState<GM, ? extends GameResult>> 
@@ -104,17 +116,17 @@ public final class MonteCarloSearchTree {
         private float getNodeExplorationValue() {
         	if (parentNode == null)
                 return 0.0f;
-            int parentSimulations = parentNode.nodeResults.getNumSimulations();
-            return EXPLORATION_CONSTANT*(float)Math.sqrt(Math.log(parentSimulations+1)/(nodeResults.getNumSimulations()+1));
+            int parentSimulations = parentNode.getNumSimulations();
+            return EXPLORATION_CONSTANT*(float)Math.sqrt(Math.log(parentSimulations+1)/(getNumSimulations()+1));
         }
         
-        public int getNodeDepth() {
-        	return nodeDepth - rootNode.nodeDepth;
+        public int getNumSimulations() {
+            return nodeResults.getNumSimulations();
         }
         
         public synchronized <GM extends GameMove, GS extends GameState<GM, ? extends GameResult>> void expandNode(GS gameState) {
         	if (!expanded && (getNodeDepth() < MAX_NODE_DEPTH) && !gameState.isGameOver() && 
-        			((nodeResults.getNumSimulations() >= NODE_EXPAND_THRESHOLD) || (getNodeDepth() == 0))) {
+        			((getNumSimulations() >= NODE_EXPAND_THRESHOLD) || (getNodeDepth() == 0))) {
         		for (GM move : gameState.getAllValidMoves()) {
         			@SuppressWarnings("unchecked")
 					GS resultingGameState = (GS) gameState.getCopy();
@@ -124,8 +136,23 @@ public final class MonteCarloSearchTree {
         		expanded = true;
         	}
         }
+        
+        private int getNodeDepth() {
+            return nodeDepth - rootNode.nodeDepth;
+        }
+        
+        public void removeParentNode() {
+            parentNode = null;
+        }
 	}
 	
+	/**
+	 * Iterator for moving through the search tree. Can move forward (deeper) and backwards (toward
+	 * the root node). When moving forward, the iterator moves to the child node with the highest
+	 * node value (the move that should be explored in the next simulated game).
+	 *
+	 * @author sandorw
+	 */
 	public static final class SearchTreeIterator implements Iterator<SearchTreeNode> {
 		private boolean atEnd;
 		private SearchTreeNode nextNode;

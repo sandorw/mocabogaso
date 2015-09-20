@@ -9,22 +9,22 @@ import java.util.List;
  */
 public interface GameState<GM extends GameMove, GR extends GameResult> {
 
-    public GameState<GM, GR> getCopy();
+    GameState<GM, GR> getCopy();
 
-    public String getNextPlayer();
+    String getNextPlayer();
 
-    public List<String> getAllPlayerNames();
+    List<String> getAllPlayerNames();
 
-    public  List<GM> getAllValidMoves();
+    List<GM> getAllValidMoves();
 
-    public GM getMoveFromString(String input);
+    GM getMoveFromString(String input);
 
-    public boolean isValidMove(GM move);
+    boolean isValidMove(GM move);
 
-    public  void applyMove(GM move);
+    void applyMove(GM move);
 
-    public  boolean isGameOver();
+    boolean isGameOver();
 
-    public  GR getGameResult();
+    GR getGameResult();
 
 }
