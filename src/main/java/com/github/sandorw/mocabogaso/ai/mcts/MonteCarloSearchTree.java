@@ -31,7 +31,7 @@ public final class MonteCarloSearchTree {
 		GameMove mostSimulatedMove = null;
 		int mostSimulations = -1;
 		for (SearchTreeNode childNode : rootNode.childNodes) {
-			int childSimulations = childNode.nodeResults.getNumSimulations();
+			int childSimulations = childNode.getNumSimulations();
 			if (childSimulations > mostSimulations) {
 				mostSimulations = childSimulations;
 				mostSimulatedMove = childNode.appliedMove;
@@ -46,6 +46,7 @@ public final class MonteCarloSearchTree {
 			for (SearchTreeNode childNode : rootNode.childNodes)
 				if (childNode.getAppliedMove().equals(move)) {
 					newRoot = childNode;
+					newRoot.removeParentNode();
 					break;
 				}
 		if (newRoot == null)
@@ -76,7 +77,7 @@ public final class MonteCarloSearchTree {
 		private volatile SearchTreeNode parentNode;
 		private volatile boolean expanded;
 		private volatile List<SearchTreeNode> childNodes;
-		private volatile NodeResults nodeResults;
+		private final NodeResults nodeResults;
         private final int nodeDepth;
          
         public <GM extends GameMove, GS extends GameState<GM, ? extends GameResult>> 
@@ -104,17 +105,17 @@ public final class MonteCarloSearchTree {
         private float getNodeExplorationValue() {
         	if (parentNode == null)
                 return 0.0f;
-            int parentSimulations = parentNode.nodeResults.getNumSimulations();
-            return EXPLORATION_CONSTANT*(float)Math.sqrt(Math.log(parentSimulations+1)/(nodeResults.getNumSimulations()+1));
+            int parentSimulations = parentNode.getNumSimulations();
+            return EXPLORATION_CONSTANT*(float)Math.sqrt(Math.log(parentSimulations+1)/(getNumSimulations()+1));
         }
         
-        public int getNodeDepth() {
-        	return nodeDepth - rootNode.nodeDepth;
+        public int getNumSimulations() {
+            return nodeResults.getNumSimulations();
         }
         
         public synchronized <GM extends GameMove, GS extends GameState<GM, ? extends GameResult>> void expandNode(GS gameState) {
         	if (!expanded && (getNodeDepth() < MAX_NODE_DEPTH) && !gameState.isGameOver() && 
-        			((nodeResults.getNumSimulations() >= NODE_EXPAND_THRESHOLD) || (getNodeDepth() == 0))) {
+        			((getNumSimulations() >= NODE_EXPAND_THRESHOLD) || (getNodeDepth() == 0))) {
         		for (GM move : gameState.getAllValidMoves()) {
         			@SuppressWarnings("unchecked")
 					GS resultingGameState = (GS) gameState.getCopy();
@@ -123,6 +124,14 @@ public final class MonteCarloSearchTree {
         		}
         		expanded = true;
         	}
+        }
+        
+        private int getNodeDepth() {
+            return nodeDepth - rootNode.nodeDepth;
+        }
+        
+        public void removeParentNode() {
+            parentNode = null;
         }
 	}
 	
