@@ -16,24 +16,24 @@ import com.google.common.collect.Lists;
  *
  * @author sandorw
  */
-public final class MonteCarloSearchTree {
+public final class MonteCarloSearchTree<GM extends GameMove> {
 	private volatile SearchTreeNode rootNode;
 	private volatile int MAX_NODE_DEPTH = 10;
     private volatile int NODE_EXPAND_THRESHOLD = 10;
     private volatile float EXPLORATION_CONSTANT = 1.0f;
 	private final NodeResultsService<? extends NodeResults> nodeResultsService;
 	
-	public MonteCarloSearchTree(NodeResultsService<? extends NodeResults> nrService,
-	        GameState<? extends GameMove, ? extends GameResult> initialGameState) {
+	public <GS extends GameState<GM, ? extends GameResult>> 
+	        MonteCarloSearchTree(NodeResultsService<? extends NodeResults> nrService, GS initialGameState) {
 		rootNode = null;
 		nodeResultsService = nrService;
 		rootNode = new SearchTreeNode(null, 0, null, initialGameState);
 	}
 	
-	public GameMove getMostSimulatedMove() {
+	public GM getMostSimulatedMove() {
 		if ((rootNode == null) || !rootNode.expanded || rootNode.childNodes.isEmpty())
 			return null;
-		GameMove mostSimulatedMove = null;
+		GM mostSimulatedMove = null;
 		int mostSimulations = -1;
 		for (SearchTreeNode childNode : rootNode.childNodes) {
 			int childSimulations = childNode.getNumSimulations();
@@ -45,7 +45,7 @@ public final class MonteCarloSearchTree {
 		return mostSimulatedMove;
 	}
 	
-	public synchronized <GM extends GameMove> void advanceTree(GM move, GameState<GM, ? extends GameResult> resultingGameState) {
+	public synchronized <GS extends GameState<GM, ? extends GameResult>> void advanceTree(GM move, GS resultingGameState) {
 		SearchTreeNode newRoot = null;
 		if (rootNode != null)
 			for (SearchTreeNode childNode : rootNode.childNodes)
@@ -59,8 +59,8 @@ public final class MonteCarloSearchTree {
 		rootNode = newRoot;		
 	}
 	
-	public synchronized SearchTreeIterator iterator() {
-		return new SearchTreeIterator(rootNode);
+	public synchronized SearchTreeIterator<GM> iterator() {
+		return new SearchTreeIterator<>(rootNode);
     }
 	
 	public void setMaxNodeDepth(int maxDepth) {
@@ -84,14 +84,14 @@ public final class MonteCarloSearchTree {
 	 * @author sandorw
 	 */
 	public final class SearchTreeNode {
-		private final GameMove appliedMove;
+		private final GM appliedMove;
 		private volatile SearchTreeNode parentNode;
 		private volatile boolean expanded;
 		private volatile List<SearchTreeNode> childNodes;
 		private final NodeResults nodeResults;
         private final int nodeDepth;
          
-        public <GM extends GameMove, GS extends GameState<GM, ? extends GameResult>> 
+        public <GS extends GameState<GM, ? extends GameResult>>
         		SearchTreeNode(GM appliedMove, int depth, SearchTreeNode parent, GS resultingGameState) {
         	this.appliedMove = appliedMove;
         	parentNode = parent;
@@ -101,16 +101,12 @@ public final class MonteCarloSearchTree {
         	nodeDepth = depth;
         }
         
-        public GameMove getAppliedMove() {
-        	return appliedMove;
-        }
-        
-        public NodeResults getNodeResults() {
-        	return nodeResults;
+        public void applyGameResultFromSimulation(GameResult gameResult) {
+            nodeResults.applyGameResult(gameResult, appliedMove);
         }
         
         public float getNodeValue() {
-        	return nodeResults.getValue() + getNodeExplorationValue();
+            return nodeResults.getValue() + getNodeExplorationValue();
         }
         
         private float getNodeExplorationValue() {
@@ -119,12 +115,12 @@ public final class MonteCarloSearchTree {
             int parentSimulations = parentNode.getNumSimulations();
             return EXPLORATION_CONSTANT*(float)Math.sqrt(Math.log(parentSimulations+1)/(getNumSimulations()+1));
         }
-        
+
         public int getNumSimulations() {
             return nodeResults.getNumSimulations();
         }
         
-        public synchronized <GM extends GameMove, GS extends GameState<GM, ? extends GameResult>> void expandNode(GS gameState) {
+        public synchronized <GS extends GameState<GM, ? extends GameResult>> void expandNode(GS gameState) {
         	if (!expanded && (getNodeDepth() < MAX_NODE_DEPTH) && !gameState.isGameOver() && 
         			((getNumSimulations() >= NODE_EXPAND_THRESHOLD) || (getNodeDepth() == 0))) {
         		for (GM move : gameState.getAllValidMoves()) {
@@ -141,6 +137,10 @@ public final class MonteCarloSearchTree {
             return nodeDepth - rootNode.nodeDepth;
         }
         
+        public GM getAppliedMove() {
+            return appliedMove;
+        }
+        
         public void removeParentNode() {
             parentNode = null;
         }
@@ -153,13 +153,13 @@ public final class MonteCarloSearchTree {
 	 *
 	 * @author sandorw
 	 */
-	public static final class SearchTreeIterator implements Iterator<SearchTreeNode> {
+	public static final class SearchTreeIterator<GM extends GameMove> implements Iterator<MonteCarloSearchTree<GM>.SearchTreeNode> {
 		private boolean atEnd;
-		private SearchTreeNode nextNode;
+		private MonteCarloSearchTree<GM>.SearchTreeNode nextNode;
 		
 		//TODO: consider refactoring to allow iteration through arbitrary child nodes. AMAF will need this.
 		
-		public SearchTreeIterator(SearchTreeNode rootNode) {
+		public SearchTreeIterator(MonteCarloSearchTree<GM>.SearchTreeNode rootNode) {
 			atEnd = false;
 			nextNode = rootNode;
 		}
@@ -176,10 +176,10 @@ public final class MonteCarloSearchTree {
 		}
 		
 		@Override
-		public SearchTreeNode next() {
+		public MonteCarloSearchTree<GM>.SearchTreeNode next() {
 			if (atEnd)
 				throw new NoSuchElementException();
-			SearchTreeNode returnNode = nextNode;
+			MonteCarloSearchTree<GM>.SearchTreeNode returnNode = nextNode;
 			advanceToNextExplorationNode();
 			return returnNode;
 		}
@@ -189,9 +189,9 @@ public final class MonteCarloSearchTree {
 				atEnd = true;
 				return;
 			}
-			SearchTreeNode explorationNode = null;
+			MonteCarloSearchTree<GM>.SearchTreeNode explorationNode = null;
 			float bestNodeValue = Float.NEGATIVE_INFINITY;
-			for (SearchTreeNode childNode : nextNode.childNodes) {
+			for (MonteCarloSearchTree<GM>.SearchTreeNode childNode : nextNode.childNodes) {
 				float childNodeValue = childNode.getNodeValue();
 				if (childNodeValue > bestNodeValue) {
 					explorationNode = childNode;
@@ -201,7 +201,7 @@ public final class MonteCarloSearchTree {
 			nextNode = explorationNode;
 		}
 		
-		public SearchTreeNode previous() {
+		public MonteCarloSearchTree<GM>.SearchTreeNode previous() {
 			if (!hasPrevious())
 				throw new NoSuchElementException();
 			if (atEnd) {
