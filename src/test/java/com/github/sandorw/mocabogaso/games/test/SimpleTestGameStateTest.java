@@ -26,7 +26,9 @@ public class SimpleTestGameStateTest {
 
     @Test
     public void copyEqualityTest() {
-        assertEquals(gameState, (SimpleTestGameState) gameState.getCopy());
+        SimpleTestGameState copy = (SimpleTestGameState) gameState.getCopy();
+        assertEquals(gameState, copy);
+        assertEquals(gameState.hashCode(), copy.hashCode());
     }
     
     @Test
@@ -85,6 +87,27 @@ public class SimpleTestGameStateTest {
         DefaultGameResult gameResult = gameState.getGameResult();
         assertFalse(gameResult.isTie());
         assertEquals(gameResult.getWinningPlayer(), "Player 1");
+    }
+    
+    @Test
+    public void parseValidMoveTest() {
+        DefaultGameMove move = gameState.getMoveFromString("2");
+        assertEquals(move.getLocation(), 2);
+    }
+    
+    @Test
+    public void parseInvalidMoveTest() {
+        DefaultGameMove move = gameState.getMoveFromString("4");
+        assertNull(move);
+    }
+    
+    @Test
+    public void parseInvalidMoveAtGameEndTest() {
+        gameState.applyMove(new DefaultGameMove("Player 1", 3));
+        gameState.applyMove(new DefaultGameMove("Player 2", 3));
+        gameState.applyMove(new DefaultGameMove("Player 1", 3));
+        DefaultGameMove move = gameState.getMoveFromString("2");
+        assertNull(move);
     }
 
 }
