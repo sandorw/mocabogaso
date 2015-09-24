@@ -57,7 +57,10 @@ public class SimpleTestGameState implements GameState<DefaultGameMove, DefaultGa
 
     @Override
     public DefaultGameMove getMoveFromString(String input) {
-        return new DefaultGameMove(getNextPlayer(), Integer.parseInt(input));
+        DefaultGameMove move = new DefaultGameMove(getNextPlayer(), Integer.parseInt(input));
+        if (isValidMove(move))
+            return move;
+        return null;
     }
 
     @Override
