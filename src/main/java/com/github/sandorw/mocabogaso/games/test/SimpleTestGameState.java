@@ -106,5 +106,9 @@ public final class SimpleTestGameState implements GameState<DefaultGameMove, Def
         SimpleTestGameState rhs = (SimpleTestGameState) obj;
         return ((moveSum == rhs.moveSum) && (lastPlayer.equals(rhs.lastPlayer)));
     }
+    
+    public String toString() {
+        return "Current sum: " + moveSum + ", next player: " + getOppositePlayerName(lastPlayer);
+    }
 
 }

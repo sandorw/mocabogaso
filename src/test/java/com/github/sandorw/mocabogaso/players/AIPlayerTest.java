@@ -14,7 +14,7 @@ import com.github.sandorw.mocabogaso.games.defaults.DefaultGameMove;
 import com.github.sandorw.mocabogaso.games.test.SimpleTestGameState;
 
 /**
- * 
+ * Tests cases for AIPlayer
  * 
  * @author sandorw
  */
