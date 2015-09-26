@@ -9,10 +9,10 @@ import com.github.sandorw.mocabogaso.games.GameState;
  *
  * @author sandorw
  */
-public interface Player {
+public interface Player<GM extends GameMove> {
 
-	<GM extends GameMove, GS extends GameState<GM, ? extends GameResult>> GM chooseNextMove(GS currentGameState);
+	<GS extends GameState<GM, ? extends GameResult>> GM chooseNextMove(GS currentGameState);
 	
-	<GM extends GameMove> void informOfMoveMade(GM move);
+	<GS extends GameState<GM, ? extends GameResult>> void informOfMoveMade(GM move, GS resultingGameState);
 	
 }

@@ -11,7 +11,7 @@ import com.github.sandorw.mocabogaso.games.GameState;
  *
  * @author sandorw
  */
-public final class HumanPlayer implements Player {
+public final class HumanPlayer<GM extends GameMove> implements Player<GM> {
     private final Scanner scanner;
     
     public HumanPlayer() {
@@ -19,7 +19,7 @@ public final class HumanPlayer implements Player {
     }
 
     @Override
-    public <GM extends GameMove, GS extends GameState<GM, ? extends GameResult>> GM chooseNextMove(
+    public <GS extends GameState<GM, ? extends GameResult>> GM chooseNextMove(
             GS currentGameState) {
         System.out.println("Please input a valid move.");
         String input = scanner.next();
@@ -33,6 +33,7 @@ public final class HumanPlayer implements Player {
     }
 
     @Override
-    public <GM extends GameMove> void informOfMoveMade(GM move) {}
+    public <GS extends GameState<GM, ? extends GameResult>> 
+        void informOfMoveMade(GM move, GS resultingGameState) {}
 
 }

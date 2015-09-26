@@ -16,9 +16,9 @@ import com.github.sandorw.mocabogaso.games.GameResult;
  *
  * @author sandorw
  */
-public class DefaultNodeResultsServiceTest {
+public final class DefaultNodeResultsServiceTest {
 
-    DefaultNodeResultsService nodeResultsService;
+    private DefaultNodeResultsService nodeResultsService;
     
     @Before
     public void before() {
