@@ -19,7 +19,7 @@ import com.google.common.collect.Lists;
  * 
  * @author sandorw
  */
-public class FirstMoveTestPlayoutPolicyTest {
+public final class FirstMoveTestPlayoutPolicyTest {
     
     @SuppressWarnings("unchecked")
     @Test

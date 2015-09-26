@@ -13,7 +13,7 @@ import com.github.sandorw.mocabogaso.games.GameState;
  *
  * @author sandorw
  */
-public class MonteCarloSearchService<GM extends GameMove> implements AIService<GM> {
+public final class MonteCarloSearchService<GM extends GameMove> implements AIService<GM> {
 
 	private MonteCarloSearchTree<GM> searchTree;
 	private PlayoutPolicy playoutPolicy;

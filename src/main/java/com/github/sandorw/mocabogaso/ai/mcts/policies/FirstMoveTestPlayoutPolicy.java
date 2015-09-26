@@ -12,7 +12,7 @@ import com.github.sandorw.mocabogaso.games.GameState;
  * 
  * @author sandorw
  */
-public class FirstMoveTestPlayoutPolicy implements PlayoutPolicy {
+public final class FirstMoveTestPlayoutPolicy implements PlayoutPolicy {
 
     @Override
     public <GM extends GameMove, GS extends GameState<GM, ? extends GameResult>> GM getPlayoutMove(GS gameState) {

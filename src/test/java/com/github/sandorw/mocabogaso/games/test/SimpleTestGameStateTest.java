@@ -15,9 +15,9 @@ import com.github.sandorw.mocabogaso.games.defaults.DefaultGameResult;
  * 
  * @author sandorw
  */
-public class SimpleTestGameStateTest {
+public final class SimpleTestGameStateTest {
     
-    SimpleTestGameState gameState;
+    private SimpleTestGameState gameState;
     
     @Before
     public void before() {

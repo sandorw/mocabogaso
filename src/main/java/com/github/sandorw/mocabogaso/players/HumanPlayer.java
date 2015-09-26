@@ -11,7 +11,7 @@ import com.github.sandorw.mocabogaso.games.GameState;
  *
  * @author sandorw
  */
-public class HumanPlayer implements Player {
+public final class HumanPlayer implements Player {
     private final Scanner scanner;
     
     public HumanPlayer() {

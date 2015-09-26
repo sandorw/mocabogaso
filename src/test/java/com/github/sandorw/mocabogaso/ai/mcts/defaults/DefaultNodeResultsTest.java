@@ -14,11 +14,11 @@ import com.github.sandorw.mocabogaso.games.GameResult;
  *
  * @author sandorw
  */
-public class DefaultNodeResultsTest {
+public final class DefaultNodeResultsTest {
 
-    DefaultNodeResults nodeResults;
-    GameResult mockedGameResult;
-    GameMove mockedGameMove;
+    private DefaultNodeResults nodeResults;
+    private GameResult mockedGameResult;
+    private GameMove mockedGameMove;
     
     @Before
     public void before() {

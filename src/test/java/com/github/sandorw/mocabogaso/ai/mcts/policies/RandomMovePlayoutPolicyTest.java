@@ -18,7 +18,7 @@ import com.google.common.collect.Lists;
  * 
  * @author sandorw
  */
-public class RandomMovePlayoutPolicyTest {
+public final class RandomMovePlayoutPolicyTest {
 
     @SuppressWarnings("unchecked")
     @Test

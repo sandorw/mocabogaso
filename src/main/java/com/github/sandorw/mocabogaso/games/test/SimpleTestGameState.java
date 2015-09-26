@@ -14,7 +14,7 @@ import com.google.common.collect.Lists;
  *
  * @author sandorw
  */
-public class SimpleTestGameState implements GameState<DefaultGameMove, DefaultGameResult> {
+public final class SimpleTestGameState implements GameState<DefaultGameMove, DefaultGameResult> {
     private static int GOAL_SUM = 10;
     private int moveSum;
     private String lastPlayer;

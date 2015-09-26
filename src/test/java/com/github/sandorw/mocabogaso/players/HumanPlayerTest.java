@@ -17,9 +17,9 @@ import com.github.sandorw.mocabogaso.games.test.SimpleTestGameState;
  * 
  * @author sandorw
  */
-public class HumanPlayerTest {
-    HumanPlayer player;
-    SimpleTestGameState gameState;
+public final class HumanPlayerTest {
+    private HumanPlayer player;
+    private SimpleTestGameState gameState;
     
     @Before
     public void before() {

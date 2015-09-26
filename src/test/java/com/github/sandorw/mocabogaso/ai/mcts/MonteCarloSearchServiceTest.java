@@ -14,7 +14,7 @@ import com.github.sandorw.mocabogaso.games.test.SimpleTestGameState;
  * 
  * @author sandorw
  */
-public class MonteCarloSearchServiceTest {
+public final class MonteCarloSearchServiceTest {
     
     @Test
     public void searchProducesValidMovesTest() {

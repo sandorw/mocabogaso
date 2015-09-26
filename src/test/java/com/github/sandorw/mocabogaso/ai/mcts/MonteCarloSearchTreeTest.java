@@ -24,10 +24,10 @@ import com.google.common.collect.Lists;
  */
 public final class MonteCarloSearchTreeTest {
 	
-	MonteCarloSearchTree<GameMove> searchTree;
-	GameMove goodMockedMove;
-	GameMove badMockedMove;
-	GameState<GameMove,GameResult> mockedGameState;
+	private MonteCarloSearchTree<GameMove> searchTree;
+	private GameMove goodMockedMove;
+	private GameMove badMockedMove;
+	private GameState<GameMove,GameResult> mockedGameState;
 	
 	@Rule
 	public ExpectedException exception = ExpectedException.none();
