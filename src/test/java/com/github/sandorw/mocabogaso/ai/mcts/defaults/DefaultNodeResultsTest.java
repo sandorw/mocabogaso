@@ -36,7 +36,7 @@ public final class DefaultNodeResultsTest {
     @Test
     public void addWinningSimulationTest() {
         when(mockedGameResult.getWinningPlayer()).thenReturn("Player 1");
-        when(mockedGameMove.getPlayer()).thenReturn("Player 1");
+        when(mockedGameMove.getPlayerName()).thenReturn("Player 1");
         nodeResults.applyGameResult(mockedGameResult, mockedGameMove);
         assertEquals(nodeResults.getNumSimulations(), 1);
         assertTrue(nodeResults.getValue() > 0.0f);
@@ -45,7 +45,7 @@ public final class DefaultNodeResultsTest {
     @Test
     public void addLosingSimulationTest() {
         when(mockedGameResult.getWinningPlayer()).thenReturn("Player 1");
-        when(mockedGameMove.getPlayer()).thenReturn("Player 2");
+        when(mockedGameMove.getPlayerName()).thenReturn("Player 2");
         when(mockedGameResult.isTie()).thenReturn(false);
         nodeResults.applyGameResult(mockedGameResult, mockedGameMove);
         assertEquals(nodeResults.getNumSimulations(), 1);
@@ -55,7 +55,7 @@ public final class DefaultNodeResultsTest {
     @Test
     public void addTiedSimulationTest() {
         when(mockedGameResult.getWinningPlayer()).thenReturn("No one");
-        when(mockedGameMove.getPlayer()).thenReturn("Player 2");
+        when(mockedGameMove.getPlayerName()).thenReturn("Player 2");
         when(mockedGameResult.isTie()).thenReturn(true);
         nodeResults.applyGameResult(mockedGameResult, mockedGameMove);
         assertEquals(nodeResults.getNumSimulations(), 1);

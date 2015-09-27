@@ -33,7 +33,7 @@ public final class SimpleTestGameState implements GameState<DefaultGameMove, Def
     }
 
     @Override
-    public String getNextPlayer() {
+    public String getNextPlayerName() {
         return getOppositePlayerName(lastPlayer);
     }
     
@@ -50,14 +50,14 @@ public final class SimpleTestGameState implements GameState<DefaultGameMove, Def
     public List<DefaultGameMove> getAllValidMoves() {
         List<DefaultGameMove> moveList = Lists.newArrayList();
         for (int i=1; moveSum+i <= GOAL_SUM && i <= 3; ++i) {
-            moveList.add(new DefaultGameMove(getNextPlayer(), i));
+            moveList.add(new DefaultGameMove(getNextPlayerName(), i));
         }
         return moveList;
     }
 
     @Override
     public DefaultGameMove getMoveFromString(String input) {
-        DefaultGameMove move = new DefaultGameMove(getNextPlayer(), Integer.parseInt(input));
+        DefaultGameMove move = new DefaultGameMove(getNextPlayerName(), Integer.parseInt(input));
         if (isValidMove(move))
             return move;
         return null;
@@ -65,7 +65,7 @@ public final class SimpleTestGameState implements GameState<DefaultGameMove, Def
 
     @Override
     public boolean isValidMove(DefaultGameMove move) {
-        if (!move.getPlayer().equals(getNextPlayer()))
+        if (!move.getPlayerName().equals(getNextPlayerName()))
             return false;
         return ((move.getLocation() >= 1) && (move.getLocation() <= 3) 
                 && (moveSum + move.getLocation() <= GOAL_SUM));
