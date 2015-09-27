@@ -34,9 +34,9 @@ public final class SimpleTestGameStateTest {
     @Test
     public void getNextPlayerTest() {
         gameState.applyMove(new DefaultGameMove("Player 1", 1));
-        assertEquals(gameState.getNextPlayer(), "Player 2");
+        assertEquals(gameState.getNextPlayerName(), "Player 2");
         gameState.applyMove(new DefaultGameMove("Player 2", 1));
-        assertEquals(gameState.getNextPlayer(), "Player 1");
+        assertEquals(gameState.getNextPlayerName(), "Player 1");
     }
     
     @Test
@@ -54,7 +54,7 @@ public final class SimpleTestGameStateTest {
         int moveSum = 0;
         for (DefaultGameMove move : moveList) {
             moveSum += move.getLocation();
-            assertEquals(move.getPlayer(), "Player 1");
+            assertEquals(move.getPlayerName(), "Player 1");
         }
         assertEquals(moveSum, 6);
     }
@@ -67,7 +67,7 @@ public final class SimpleTestGameStateTest {
         List<DefaultGameMove> moveList = gameState.getAllValidMoves();
         assertEquals(moveList.size(), 1);
         DefaultGameMove move = moveList.get(0);
-        assertEquals(move.getPlayer(), "Player 2");
+        assertEquals(move.getPlayerName(), "Player 2");
         assertEquals(move.getLocation(), 1);
     }
     

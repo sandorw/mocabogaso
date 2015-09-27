@@ -28,7 +28,7 @@ public final class DefaultGameResult implements GameResult {
     
     @Override
     public String toString() {
-        return "DefaultGameResult: [" + (isTie ? "Tie" : winningPlayerName + " player won") + "]";
+        return "DefaultGameResult: [" + (isTie ? "Tie" : winningPlayerName + " won") + "]";
     }
 
 }

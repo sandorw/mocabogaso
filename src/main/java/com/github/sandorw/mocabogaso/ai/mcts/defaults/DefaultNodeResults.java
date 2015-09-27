@@ -33,7 +33,7 @@ public final class DefaultNodeResults implements NodeResults {
         ++numSimulations;
         if (appliedMove == null)
             return;
-        if (gameResult.getWinningPlayer().equals(appliedMove.getPlayer()))
+        if (gameResult.getWinningPlayer().equals(appliedMove.getPlayerName()))
             ++numWins;
         else if (!gameResult.isTie())
             --numWins;

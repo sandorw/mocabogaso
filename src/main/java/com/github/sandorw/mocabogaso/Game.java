@@ -56,7 +56,7 @@ public final class Game<GM extends GameMove, GS extends GameState<GM, ? extends 
     }
     
     private GM getNextMove() {
-        String nextPlayer = globalGameState.getNextPlayer();
+        String nextPlayer = globalGameState.getNextPlayerName();
         return players.get(nextPlayer).chooseNextMove(globalGameState.getCopy());
     }
     

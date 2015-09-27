@@ -17,7 +17,7 @@ public final class DefaultGameMove implements GameMove {
     }
 
     @Override
-    public String getPlayer() {
+    public String getPlayerName() {
         return playerName;
     }
     

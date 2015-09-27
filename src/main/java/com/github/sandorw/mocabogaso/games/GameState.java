@@ -11,7 +11,7 @@ public interface GameState<GM extends GameMove, GR extends GameResult> {
 
     GameState<GM, GR> getCopy();
 
-    String getNextPlayer();
+    String getNextPlayerName();
 
     List<String> getAllPlayerNames();
 

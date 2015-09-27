@@ -7,6 +7,6 @@ package com.github.sandorw.mocabogaso.games;
  */
 public interface GameMove {
 
-    String getPlayer();
+    String getPlayerName();
 
 }
