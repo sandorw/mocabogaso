@@ -27,8 +27,7 @@ public final class SimpleTestGameStateTest {
     @Test
     public void copyEqualityTest() {
         SimpleTestGameState copy = (SimpleTestGameState) gameState.getCopy();
-        assertEquals(gameState, copy);
-        assertEquals(gameState.hashCode(), copy.hashCode());
+        assertTrue(gameState.equalsState(copy));
     }
     
     @Test
