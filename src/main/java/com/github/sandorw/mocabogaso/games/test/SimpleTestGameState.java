@@ -1,7 +1,6 @@
 package com.github.sandorw.mocabogaso.games.test;
 
 import java.util.List;
-import java.util.Objects;
 
 import com.github.sandorw.mocabogaso.games.GameState;
 import com.github.sandorw.mocabogaso.games.defaults.DefaultGameMove;
@@ -90,15 +89,9 @@ public final class SimpleTestGameState implements GameState<DefaultGameMove, Def
     public DefaultGameResult getGameResult() {
         return new DefaultGameResult(getOppositePlayerName(lastPlayer), false);
     }
-    
-    @Override
-    public int hashCode() {
-        return Objects.hash(moveSum, lastPlayer);
-    }
 
-    @Override
-    public boolean equals(Object obj) {
-       if (!(obj instanceof SimpleTestGameState))
+    public boolean equalsState(Object obj) {
+       if (this.getClass() != obj.getClass())
             return false;
         if (obj == this)
             return true;

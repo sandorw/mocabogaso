@@ -1,9 +1,7 @@
 package com.github.sandorw.mocabogaso.games.mnkgame;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 import com.github.sandorw.mocabogaso.games.GameState;
 import com.github.sandorw.mocabogaso.games.defaults.DefaultGameMove;
@@ -199,17 +197,9 @@ public class MNKGameState implements GameState<DefaultGameMove, DefaultGameResul
         stringBuilder.append("\n");
         return stringBuilder.toString();
     }
-
-    @Override
-    public int hashCode() {
-        int hash = Arrays.deepHashCode(boardLocation);
-        hash = hash*23 + Objects.hash(numRows, numCols, goalNumInARow, nextPlayerName); 
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-       if (!(obj instanceof MNKGameState))
+    
+    public boolean equalsState(Object obj) {
+       if (this.getClass() != obj.getClass())
             return false;
         if (obj == this)
             return true;
