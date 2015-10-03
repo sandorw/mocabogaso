@@ -62,7 +62,7 @@ public final class MonteCarloSearchTree<GM extends GameMove, NR extends NodeResu
 	 *
 	 * @author sandorw
 	 */
-	public final class SearchTreeNode {
+	private final class SearchTreeNode {
 		private final List<SearchTreeNode> parentNodes;
 		private volatile boolean expanded;
 		private volatile List<Pair<GM,SearchTreeNode>> childNodes;
@@ -90,7 +90,7 @@ public final class MonteCarloSearchTree<GM extends GameMove, NR extends NodeResu
         }
 
         private float getExplorationValue(int numParentSimulations) {
-            return EXPLORATION_CONSTANT*(float)Math.sqrt(Math.log(numParentSimulations+1)/getNumSimulations()+1);
+            return EXPLORATION_CONSTANT*(float)Math.sqrt(Math.log(numParentSimulations+1)/(getNumSimulations()+1));
         }
         
         private int getNumSimulations() {
@@ -153,11 +153,12 @@ public final class MonteCarloSearchTree<GM extends GameMove, NR extends NodeResu
             }
             return node;
         }
-   
 	}
 	
 	/**
-	 * Iterator for passing through the search tree. Provides access to both parent and child nodes.
+	 * Iterator for passing through the search tree. Provides access to both parent and child
+	 * nodes. Note that this does not follow the normal iterator semantics. The iterator begins
+	 * pointing at the root node.
 	 * 
 	 * @author sandorw
 	 */
@@ -166,7 +167,7 @@ public final class MonteCarloSearchTree<GM extends GameMove, NR extends NodeResu
 	    private int currentChildIndex;
 	    private int currentParentIndex;
 	    
-	    public SearchTreeIterator(MonteCarloSearchTree<GM,NR>.SearchTreeNode startingNode) {
+	    private SearchTreeIterator(MonteCarloSearchTree<GM,NR>.SearchTreeNode startingNode) {
 	        currentNode = startingNode;
 	        resetIndices();
 	    }

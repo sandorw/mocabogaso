@@ -8,8 +8,11 @@ import org.junit.Test;
 
 import com.github.sandorw.mocabogaso.ai.mcts.MonteCarloSearchTree;
 import com.github.sandorw.mocabogaso.ai.mcts.MonteCarloSearchTree.SearchTreeIterator;
-import com.github.sandorw.mocabogaso.games.GameMove;
-import com.github.sandorw.mocabogaso.games.GameResult;
+import com.github.sandorw.mocabogaso.games.GameState;
+import com.github.sandorw.mocabogaso.games.defaults.DefaultGameMove;
+import com.github.sandorw.mocabogaso.games.defaults.DefaultGameResult;
+import com.github.sandorw.mocabogaso.games.test.SimpleTestGameState;
+import com.google.common.collect.ImmutableList;
 
 /**
  * Test cases for DefaultNodeResultsService.
@@ -17,7 +20,6 @@ import com.github.sandorw.mocabogaso.games.GameResult;
  * @author sandorw
  */
 public final class DefaultNodeResultsServiceTest {
-
     private DefaultNodeResultsService nodeResultsService;
     
     @Before
@@ -27,19 +29,31 @@ public final class DefaultNodeResultsServiceTest {
     
     @Test
     public void getNewNodeResultsTest() {
-        DefaultNodeResults nodeResults = nodeResultsService.getNewNodeResults(null, null);
+        @SuppressWarnings("rawtypes")
+        GameState mockedGameState = mock(GameState.class);
+        when(mockedGameState.getAllPlayerNames()).thenReturn(ImmutableList.of("Player 1", "Player 2"));
+        @SuppressWarnings("unchecked")
+        DefaultNodeResults nodeResults = nodeResultsService.getNewNodeResults(mockedGameState);
         assertEquals(nodeResults.getNumSimulations(), 0);
-        assertEquals(nodeResults.getValue(), 0.0f, 0.001f);
+        assertEquals(nodeResults.getValue("Player 1"), 0.0f, 0.001f);
+        assertEquals(nodeResults.getValue("Player 2"), 0.0f, 0.001f);
     }
     
     @Test
     public void propagateGameResultTest() {
-        MonteCarloSearchTree<GameMove> searchTree = new MonteCarloSearchTree<>(nodeResultsService, null);
-        SearchTreeIterator<GameMove> it = searchTree.iterator();
-        MonteCarloSearchTree<GameMove>.SearchTreeNode rootNode = it.next();
-        GameResult mockedGameResult = mock(GameResult.class);
-        nodeResultsService.propagateGameResult(mockedGameResult, it);
-        assertEquals(rootNode.getNumSimulations(), 1);
+        SimpleTestGameState gameState = new SimpleTestGameState();
+        MonteCarloSearchTree<DefaultGameMove,DefaultNodeResults> searchTree = new MonteCarloSearchTree<>(nodeResultsService, gameState);
+        searchTree.setNodeExpandThreshold(0);
+        searchTree.iterator().expandNode(gameState);
+        SearchTreeIterator<DefaultGameMove,DefaultNodeResults> iterator = searchTree.iterator();
+        while (iterator.hasNext()) {
+            String evaluatingPlayerName = gameState.getNextPlayerName();
+            DefaultGameMove move = iterator.advanceToNextExplorationNode(evaluatingPlayerName);
+            gameState.applyMove(move);
+        }
+        DefaultGameResult gameResult = new DefaultGameResult("Player 1", false);
+        nodeResultsService.propagateGameResult(gameResult, iterator);
+        assertEquals(searchTree.iterator().getCurrentNodeResults().getNumSimulations(), 1);
     }
 
 }

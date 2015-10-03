@@ -10,7 +10,6 @@ import com.github.sandorw.mocabogaso.Game;
 import com.github.sandorw.mocabogaso.games.GameResult;
 import com.github.sandorw.mocabogaso.games.defaults.DefaultGameMove;
 import com.github.sandorw.mocabogaso.games.mnkgame.MNKGameState;
-import com.github.sandorw.mocabogaso.games.tictactoe.TicTacToeGameState;
 import com.github.sandorw.mocabogaso.players.AIPlayerFactory;
 
 public class ConnectXGameStateTest {

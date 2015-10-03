@@ -1,12 +1,8 @@
 package com.github.sandorw.mocabogaso.ai.mcts.defaults;
 
-import java.util.ArrayDeque;
 import java.util.Deque;
-import java.util.Queue;
 import java.util.Set;
-import java.util.concurrent.LinkedBlockingDeque;
 
-import com.github.sandorw.mocabogaso.ai.mcts.MonteCarloSearchTree;
 import com.github.sandorw.mocabogaso.ai.mcts.MonteCarloSearchTree.SearchTreeIterator;
 import com.github.sandorw.mocabogaso.ai.mcts.NodeResultsService;
 import com.github.sandorw.mocabogaso.games.GameMove;
