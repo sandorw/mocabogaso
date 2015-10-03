@@ -13,14 +13,13 @@ import com.github.sandorw.mocabogaso.games.GameState;
  *
  * @author sandorw
  */
-public final class MonteCarloSearchService<GM extends GameMove> implements AIService<GM> {
-
-	private MonteCarloSearchTree<GM> searchTree;
+public final class MonteCarloSearchService<GM extends GameMove, NR extends NodeResults> implements AIService<GM> {
+	private MonteCarloSearchTree<GM,NR> searchTree;
 	private PlayoutPolicy playoutPolicy;
-	private NodeResultsService<? extends NodeResults> nodeResultsService;
+	private NodeResultsService<NR> nodeResultsService;
 	
-	public <GS extends GameState<GM, ? extends GameResult>> MonteCarloSearchService(
-	        NodeResultsService<? extends NodeResults> nodeResultsService, PlayoutPolicy policy, GS initialGameState) {
+	public <GS extends GameState<GM, ? extends GameResult>> 
+	        MonteCarloSearchService(NodeResultsService<NR> nodeResultsService, PlayoutPolicy policy, GS initialGameState) {
 	    this.nodeResultsService = nodeResultsService;
 	    playoutPolicy = policy;
 	    searchTree = new MonteCarloSearchTree<>(nodeResultsService, initialGameState);
@@ -28,30 +27,28 @@ public final class MonteCarloSearchService<GM extends GameMove> implements AISer
 	
 	@Override
 	public <GS extends GameState<GM, ? extends GameResult>>
-				void searchMoves(GS currentGameState, int allottedTimeMs) {
-		long timeout = System.currentTimeMillis() + (long)allottedTimeMs;
-		MonteCarloSearchTree<GM>.SearchTreeNode rootNode = searchTree.iterator().next();
-		rootNode.expandNode(currentGameState);
-        while (System.currentTimeMillis() < timeout) {
-            performPlayoutSimulation(currentGameState.getCopy());
-        }
+	        void searchMoves(GS currentGameState, int allottedTimeMs) {
+	    long timeout = System.currentTimeMillis() + (long)allottedTimeMs;
+	    searchTree.iterator().expandNode(currentGameState);
+	    while (System.currentTimeMillis() < timeout) {
+	        performPlayoutSimulation(currentGameState.getCopy());
+	    }
 	}
 	
 	private <GS extends GameState<GM, ? extends GameResult>> void performPlayoutSimulation(GS playoutGameState) {
-	    SearchTreeIterator<GM> treeIterator = searchTree.iterator();
-	    //The gameState already reflects the move of the root node, so skip past it
-	    MonteCarloSearchTree<GM>.SearchTreeNode treeNode = treeIterator.next();
-	    while(treeIterator.hasNext()) {
-	        treeNode = treeIterator.next();
-	        playoutGameState.applyMove(treeNode.getAppliedMove());
+	    SearchTreeIterator<GM,NR> iterator = searchTree.iterator();
+	    while (iterator.hasNext()) {
+	        String currentPlayerName = playoutGameState.getNextPlayerName();
+	        GM move = iterator.advanceToNextExplorationNode(currentPlayerName);
+	        playoutGameState.applyMove(move);
 	    }
 	    GameState<GM, ? extends GameResult> expansionGameState = playoutGameState.getCopy();
 	    while (!playoutGameState.isGameOver()) {
 	        GM nextMove = playoutPolicy.getPlayoutMove(playoutGameState);
 	        playoutGameState.applyMove(nextMove);
 	    }
-	    nodeResultsService.propagateGameResult(playoutGameState.getGameResult(), treeIterator);
-	    treeNode.expandNode(expansionGameState);
+	    nodeResultsService.propagateGameResult(playoutGameState.getGameResult(), iterator);
+	    iterator.expandNode(expansionGameState);
 	}
 
 	@Override
@@ -63,5 +60,4 @@ public final class MonteCarloSearchService<GM extends GameMove> implements AISer
 	public void applyMove(GM move, GameState<GM, ? extends GameResult> resultingGameState) {
 	    searchTree.advanceTree(move, resultingGameState);
 	}
-
 }
