@@ -24,6 +24,7 @@ targetCompatibility = 1.8
 
 dependencies {
 	compile "com.google.guava:guava:$guavaVersion"
+	compile "org.apache.commons:commons-lang3:$commonsLangVersion"
 
 	testCompile "junit:junit:$junitVersion"
 	testCompile "org.mockito:mockito-core:$mockitoVersion"
