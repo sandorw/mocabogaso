@@ -13,8 +13,8 @@ import com.github.sandorw.mocabogaso.games.GameState;
  */
 public interface NodeResultsService<NR extends NodeResults> {
 		
-	<GM extends GameMove, GS extends GameState<GM, ? extends GameResult>> NR getNewNodeResults(GM appliedMove, GS resultGameState);
+	<GM extends GameMove, GS extends GameState<GM, ? extends GameResult>> NR getNewNodeResults(GS resultGameState);
 	
-	<GM extends GameMove> void propagateGameResult(GameResult gameResult, SearchTreeIterator<GM> treeIterator);
+	<GM extends GameMove> void propagateGameResult(GameResult gameResult, SearchTreeIterator<GM,NR> treeIterator);
 	
 }

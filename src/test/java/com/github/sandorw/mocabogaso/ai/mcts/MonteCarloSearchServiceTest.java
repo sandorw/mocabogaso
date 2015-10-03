@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
+import com.github.sandorw.mocabogaso.ai.mcts.defaults.DefaultNodeResults;
 import com.github.sandorw.mocabogaso.ai.mcts.defaults.DefaultNodeResultsService;
 import com.github.sandorw.mocabogaso.ai.mcts.policies.FirstMoveTestPlayoutPolicy;
 import com.github.sandorw.mocabogaso.games.defaults.DefaultGameMove;
@@ -21,7 +22,7 @@ public final class MonteCarloSearchServiceTest {
         SimpleTestGameState gameState = new SimpleTestGameState();
         DefaultNodeResultsService nodeResultsService = new DefaultNodeResultsService();
         PlayoutPolicy policy = new FirstMoveTestPlayoutPolicy();
-        MonteCarloSearchService<DefaultGameMove> searchService = new MonteCarloSearchService<>(nodeResultsService, policy, gameState);
+        MonteCarloSearchService<DefaultGameMove,DefaultNodeResults> searchService = new MonteCarloSearchService<>(nodeResultsService, policy, gameState);
         searchService.searchMoves(gameState, 50);
         DefaultGameMove suggestedMove = searchService.selectMove();
         searchService.applyMove(suggestedMove, gameState);
@@ -39,7 +40,7 @@ public final class MonteCarloSearchServiceTest {
         gameState.applyMove(new DefaultGameMove("Player 1", 2));
         DefaultNodeResultsService nodeResultsService = new DefaultNodeResultsService();
         PlayoutPolicy policy = new FirstMoveTestPlayoutPolicy();
-        MonteCarloSearchService<DefaultGameMove> searchService = new MonteCarloSearchService<>(nodeResultsService, policy, gameState);
+        MonteCarloSearchService<DefaultGameMove,DefaultNodeResults> searchService = new MonteCarloSearchService<>(nodeResultsService, policy, gameState);
         searchService.searchMoves(gameState, 50);
         DefaultGameMove suggestedMove = searchService.selectMove();
         assertEquals(suggestedMove.getLocation(), 1);

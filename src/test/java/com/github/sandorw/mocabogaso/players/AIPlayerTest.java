@@ -8,6 +8,7 @@ import org.junit.Test;
 import com.github.sandorw.mocabogaso.ai.AIService;
 import com.github.sandorw.mocabogaso.ai.mcts.MonteCarloSearchService;
 import com.github.sandorw.mocabogaso.ai.mcts.PlayoutPolicy;
+import com.github.sandorw.mocabogaso.ai.mcts.defaults.DefaultNodeResults;
 import com.github.sandorw.mocabogaso.ai.mcts.defaults.DefaultNodeResultsService;
 import com.github.sandorw.mocabogaso.ai.mcts.policies.FirstMoveTestPlayoutPolicy;
 import com.github.sandorw.mocabogaso.games.defaults.DefaultGameMove;
@@ -19,7 +20,6 @@ import com.github.sandorw.mocabogaso.games.test.SimpleTestGameState;
  * @author sandorw
  */
 public final class AIPlayerTest {
-
     private SimpleTestGameState gameState;
     private AIPlayer<DefaultGameMove> aiPlayer;
     
@@ -29,7 +29,7 @@ public final class AIPlayerTest {
         PlayoutPolicy policy = new FirstMoveTestPlayoutPolicy();
         gameState = new SimpleTestGameState();
         AIService<DefaultGameMove> aiService = 
-                new MonteCarloSearchService<DefaultGameMove>(nodeResultsService, policy, gameState);
+                new MonteCarloSearchService<DefaultGameMove,DefaultNodeResults>(nodeResultsService, policy, gameState);
         aiPlayer = new AIPlayer<DefaultGameMove>(aiService, 50);
     }
     
@@ -47,5 +47,4 @@ public final class AIPlayerTest {
         move = aiPlayer.chooseNextMove(gameState);
         assertTrue(gameState.isValidMove(move));
     }
-
 }

@@ -1,21 +1,16 @@
 package com.github.sandorw.mocabogaso.ai.mcts;
 
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
-
-import java.util.List;
-import java.util.NoSuchElementException;
 
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 import com.github.sandorw.mocabogaso.ai.mcts.MonteCarloSearchTree.SearchTreeIterator;
-import com.github.sandorw.mocabogaso.games.GameMove;
-import com.github.sandorw.mocabogaso.games.GameResult;
-import com.github.sandorw.mocabogaso.games.GameState;
-import com.google.common.collect.Lists;
+import com.github.sandorw.mocabogaso.ai.mcts.defaults.DefaultNodeResults;
+import com.github.sandorw.mocabogaso.ai.mcts.defaults.DefaultNodeResultsService;
+import com.github.sandorw.mocabogaso.games.defaults.DefaultGameMove;
+import com.github.sandorw.mocabogaso.games.defaults.DefaultGameResult;
+import com.github.sandorw.mocabogaso.games.test.SimpleTestGameState;
 
 /**
  * Test cases for MonteCarloSearchTree.
@@ -23,187 +18,129 @@ import com.google.common.collect.Lists;
  * @author sandorw
  */
 public final class MonteCarloSearchTreeTest {
-	
-	private MonteCarloSearchTree<GameMove> searchTree;
-	private GameMove goodMockedMove;
-	private GameMove badMockedMove;
-	private GameState<GameMove,GameResult> mockedGameState;
-	
-	@Rule
-	public ExpectedException exception = ExpectedException.none();
-	
-	@SuppressWarnings("unchecked")
-	@Before
-	public void before() {
-	    badMockedMove = mock(GameMove.class);
-        goodMockedMove = mock(GameMove.class);
-        List<GameMove> moveList = Lists.newArrayList();
-        moveList.add(badMockedMove);
-        moveList.add(goodMockedMove);
-        
-        mockedGameState = mock(GameState.class);
-        when(mockedGameState.getAllValidMoves()).thenReturn(moveList);
-        when(mockedGameState.isGameOver()).thenReturn(false);
-        when(mockedGameState.getCopy()).thenReturn(mockedGameState);
-        
-		NodeResultsService<NodeResults> mockedNodeResultsService = mock(NodeResultsService.class);
-		NodeResults badMockedResults = mock(NodeResults.class);
-		NodeResults goodMockedResults = mock(NodeResults.class);
-		NodeResults rootMockedResults = mock(NodeResults.class);
-		when(badMockedResults.getValue()).thenReturn(0.0f);
-		when(badMockedResults.getNumSimulations()).thenReturn(1);
-		when(goodMockedResults.getValue()).thenReturn(1.0f);
-		when(goodMockedResults.getNumSimulations()).thenReturn(2);
-		when(rootMockedResults.getValue()).thenReturn(0.0f);
-		when(rootMockedResults.getNumSimulations()).thenReturn(3);
-		when(mockedNodeResultsService.getNewNodeResults(eq(badMockedMove), any())).thenReturn(badMockedResults);
-		when(mockedNodeResultsService.getNewNodeResults(eq(goodMockedMove), any())).thenReturn(goodMockedResults);
-		when(mockedNodeResultsService.getNewNodeResults(eq(null), any())).thenReturn(rootMockedResults);
+    SimpleTestGameState gameState;
+    MonteCarloSearchTree<DefaultGameMove,DefaultNodeResults> searchTree;
 
-		searchTree = new MonteCarloSearchTree<>(mockedNodeResultsService, mockedGameState);
-	}
-	
-	@Test
-	public void iteratorAtEndHasNextTest() {
-		SearchTreeIterator<GameMove> it = searchTree.iterator();
-		assert(it.hasNext());
-		it.next();
-		assertFalse(it.hasNext());
-	}
-	
-	@Test
-	public void iteratorHasPreviousTest() {
-	    SearchTreeIterator<GameMove> it = searchTree.iterator();
-		assert(!it.hasPrevious());
-		it.next();
-		assertTrue(it.hasPrevious());
-	}
-	
-	@Test
-	public void iteratorNextExceptionTest() {
-	    SearchTreeIterator<GameMove> it = searchTree.iterator();
-		it.next();
-		exception.expect(NoSuchElementException.class);
-		it.next();
-	}
-	
-	@Test
-	public void iteratorPreviousExceptionTest() {
-	    SearchTreeIterator<GameMove> it = searchTree.iterator();
-		exception.expect(NoSuchElementException.class);
-		it.previous();
-	}
-	
-	@Test
-	public void iteratorReturnToRootTest() {
-	    expandLeafNodeWithMockedGameState();
-	    SearchTreeIterator<GameMove> it = searchTree.iterator();
-	    it.next();
-	    MonteCarloSearchTree<GameMove>.SearchTreeNode rootNode = it.previous();
-	    assertNull(rootNode.getAppliedMove());
-	    assertFalse(it.hasPrevious());
-	}
-	
-	@Test
-	public void iteratorPreviousFromEndTest() {
-	    expandLeafNodeWithMockedGameState();
-	    SearchTreeIterator<GameMove> it = searchTree.iterator();
-		it.next();
-		it.next();
-		assertTrue(it.hasPrevious());
-		MonteCarloSearchTree<GameMove>.SearchTreeNode goodMoveNode = it.previous();
-		assertEquals(goodMoveNode.getAppliedMove(), goodMockedMove);
-	}
-	
-	@Test
-	public void zeroMaxDepthTest() {
-		exception.expect(IllegalArgumentException.class);
-		searchTree.setMaxNodeDepth(0);
-	}
-	
-	@Test
-	public void advanceTreeToMoveTest() {
-		expandLeafNodeWithMockedGameState();
-		searchTree.advanceTree(goodMockedMove, mockedGameState);
-		SearchTreeIterator<GameMove> it = searchTree.iterator();
-		MonteCarloSearchTree<GameMove>.SearchTreeNode treeNode = it.next();
-		assertEquals(treeNode.getAppliedMove(),goodMockedMove);
-	}
-	
-	@Test
-	public void doNotExpandBeyondMaxDepthTest() {
-		searchTree.setMaxNodeDepth(1);
-		searchTree.setNodeExpandThreshold(1);
-		expandLeafNodeWithMockedGameState();
-		// Should not expand due to max depth restriction
-		expandLeafNodeWithMockedGameState();
-		SearchTreeIterator<GameMove> it = searchTree.iterator();
-		it.next();
-		it.next();
-		assertFalse(it.hasNext());
-	}
-	
-	@Test
-	public void doNotExpandUnderThresholdTest() {
-		searchTree.setNodeExpandThreshold(3);
-		expandLeafNodeWithMockedGameState();
-		// Should not expand due to node expand threshold
-		expandLeafNodeWithMockedGameState();
-		SearchTreeIterator<GameMove> it = searchTree.iterator();
-		it.next();
-		it.next();
-		assertFalse(it.hasNext());
-	}
-	
-	@Test
-	public void doNotExpandWhenGameOverTest() {
-		when(mockedGameState.isGameOver()).thenReturn(true);
-		expandLeafNodeWithMockedGameState();
-		SearchTreeIterator<GameMove> it = searchTree.iterator();
-		it.next();
-		assertFalse(it.hasNext());
-	}
-	
-	@Test
-	public void advanceToMoveNotInTreeTest() {
-		searchTree.advanceTree(goodMockedMove, mockedGameState);
-		SearchTreeIterator<GameMove> it = searchTree.iterator();
-		MonteCarloSearchTree<GameMove>.SearchTreeNode treeNode = it.next();
-		assertEquals(treeNode.getAppliedMove(),goodMockedMove);
-	}
-	
-	@Test
-	public void getMostSimulatedMoveTest() {
-	    expandLeafNodeWithMockedGameState();
-		assertEquals(searchTree.getMostSimulatedMove(),goodMockedMove);
-	}
-	
-	@Test
-	public void exploreBadMoveTest() {
-	    expandLeafNodeWithMockedGameState();
-	    SearchTreeIterator<GameMove> it = searchTree.iterator();
-	    MonteCarloSearchTree<GameMove>.SearchTreeNode rootNode = it.next();
-	    MonteCarloSearchTree<GameMove>.SearchTreeNode goodMoveNode = it.next();
-		when(rootNode.getNumSimulations()).thenReturn(100000001);
-		when(goodMoveNode.getNumSimulations()).thenReturn(100000000);
-		it = searchTree.iterator();
-		it.next();
-		MonteCarloSearchTree<GameMove>.SearchTreeNode badMoveNode = it.next();
-		assertEquals(badMoveNode.getAppliedMove(),badMockedMove);
-	}
-	
-	@Test
-	public void rootNodeExplorationValueTest() {
-	    MonteCarloSearchTree<GameMove>.SearchTreeNode rootNode = searchTree.iterator().next();
-	    assertEquals(rootNode.getNodeValue(), 0.0f, 0.001f);
-	}
+    @Before
+    public void before() {
+        DefaultNodeResultsService nodeResultsService = new DefaultNodeResultsService();
+        gameState = new SimpleTestGameState();
+        searchTree = new MonteCarloSearchTree<>(nodeResultsService, gameState);
+    }
     
-	void expandLeafNodeWithMockedGameState() {
-	    SearchTreeIterator<GameMove> it = searchTree.iterator();
-	    MonteCarloSearchTree<GameMove>.SearchTreeNode treeNode = null;
-	    while (it.hasNext())
-	        treeNode = it.next();
-	    treeNode.expandNode(mockedGameState);
-	}
-	
+    @Test
+    public void getMostSimulatedNodeTest() {
+        SearchTreeIterator<DefaultGameMove,DefaultNodeResults> iterator = searchTree.iterator();
+        iterator.expandNode(gameState);
+        iterator.advanceChildNode();
+        int moveLocation = iterator.getCurrentChildMove().getLocation();
+        iterator = iterator.getCurrentChildIterator();
+        DefaultNodeResults nodeResults = iterator.getCurrentNodeResults();
+        DefaultGameResult gameResult = new DefaultGameResult("Player 1", false);
+        nodeResults.applyGameResult(gameResult);
+        DefaultGameMove mostSimulatedMove = searchTree.getMostSimulatedMove();
+        assertEquals(moveLocation, mostSimulatedMove.getLocation());
+    }
+    
+    @Test
+    public void advanceToExistingMoveTest() {
+        SearchTreeIterator<DefaultGameMove,DefaultNodeResults> iterator = searchTree.iterator();
+        iterator.expandNode(gameState);
+        iterator.advanceChildNode();
+        DefaultGameMove move = iterator.getCurrentChildMove();
+        gameState.applyMove(move);
+        searchTree.advanceTree(move, gameState);
+        iterator = searchTree.iterator();
+        assertFalse(iterator.hasNext());
+        assertFalse(iterator.hasNextParent());
+    }
+    
+    @Test
+    public void advanceToMissingMoveTest() {
+        DefaultGameMove move = new DefaultGameMove("Player 1", 1);
+        searchTree.advanceTree(move, gameState);
+        SearchTreeIterator<DefaultGameMove,DefaultNodeResults> iterator = searchTree.iterator();
+        assertFalse(iterator.hasNext());
+        assertFalse(iterator.hasNextParent());
+    }
+    
+    @Test
+    public void dontExpandNodesWithoutEnoughSimulationsTest() {
+        SearchTreeIterator<DefaultGameMove,DefaultNodeResults> iterator = searchTree.iterator();
+        iterator.expandNode(gameState);
+        DefaultGameMove move = iterator.advanceToNextExplorationNode("Player 1");
+        gameState.applyMove(move);
+        iterator.expandNode(gameState);
+        assertFalse(iterator.hasNext());
+    }
+    
+    @Test
+    public void expandNodesWithLoweredSimulationThresholdTest() {
+        searchTree.setNodeExpandThreshold(0);
+        SearchTreeIterator<DefaultGameMove,DefaultNodeResults> iterator = searchTree.iterator();
+        iterator.expandNode(gameState);
+        DefaultGameMove move = iterator.advanceToNextExplorationNode("Player 1");
+        gameState.applyMove(move);
+        iterator.expandNode(gameState);
+        assertTrue(iterator.hasNext());
+    }
+    
+    /**
+     * Iterator tests
+     */
+    
+    @Test
+    public void unexpandedTreeIteratorTest() {
+        SearchTreeIterator<DefaultGameMove,DefaultNodeResults> iterator = searchTree.iterator();
+        assertFalse(iterator.hasNext());
+        assertFalse(iterator.hasNextChild());
+        assertFalse(iterator.hasNextParent());
+    }
+    
+    @Test
+    public void expandedNodeHasAllValidChildrenTest() {
+        SearchTreeIterator<DefaultGameMove,DefaultNodeResults> iterator = searchTree.iterator();
+        iterator.expandNode(gameState);
+        assertTrue(iterator.hasNext());
+        assertTrue(iterator.hasNextChild());
+        int numChildren = 0;
+        int moveLocationSum = 0;
+        while (iterator.hasNextChild()) {
+            iterator.advanceChildNode();
+            ++numChildren;
+            DefaultGameMove move = iterator.getCurrentChildMove();
+            assertEquals(move.getPlayerName(), "Player 1");
+            moveLocationSum += move.getLocation();
+        }
+        assertEquals(numChildren, 3);
+        assertEquals(moveLocationSum, 6);
+    }
+    
+    @Test
+    public void getParentIteratorTest() {
+        SearchTreeIterator<DefaultGameMove,DefaultNodeResults> iterator = searchTree.iterator();
+        iterator.expandNode(gameState);
+        iterator.advanceToNextExplorationNode("Player 1");
+        assertTrue(iterator.hasNextParent());
+        iterator.advanceParentNode();
+        iterator = iterator.getCurrentParentIterator();
+        assertFalse(iterator.hasNextParent());
+    }
+    
+    @Test
+    public void getChildIteratorTest() {
+        SearchTreeIterator<DefaultGameMove,DefaultNodeResults> iterator = searchTree.iterator();
+        iterator.expandNode(gameState);
+        iterator.advanceChildNode();
+        iterator = iterator.getCurrentChildIterator();
+        assertFalse(iterator.hasNextChild());
+        assertTrue(iterator.hasNextParent());
+    }
+    
+    @Test
+    public void getCleanNodeResultsTest() {
+        SearchTreeIterator<DefaultGameMove,DefaultNodeResults> iterator = searchTree.iterator();
+        DefaultNodeResults nodeResults = iterator.getCurrentNodeResults();
+        assertEquals(nodeResults.getNumSimulations(), 0);
+    }	
 }
