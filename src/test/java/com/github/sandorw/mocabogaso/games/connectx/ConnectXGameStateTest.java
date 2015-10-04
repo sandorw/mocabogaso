@@ -16,20 +16,20 @@ public class ConnectXGameStateTest {
 
     @Test
     public void invalidMoveAboveEmptyRowTest() {
-        ConnectXGameState gameState = new ConnectXGameState(3,3,3);
+        ConnectXGameState gameState = ConnectXGameState.of(3,3,3);
         assertFalse(gameState.isValidMove(new DefaultGameMove("X", 3)));
     }
     
     @Test
     public void validMoveAtBottomEmptyRowTest() {
-        ConnectXGameState gameState = new ConnectXGameState(3,3,3);
+        ConnectXGameState gameState = ConnectXGameState.of(3,3,3);
         gameState.applyMove(new DefaultGameMove("X",0));
         assertTrue(gameState.isValidMove(new DefaultGameMove("O", 3)));
     }
     
     @Test
     public void copyEqualityTest() {
-        ConnectXGameState gameState = new ConnectXGameState(3,4,3);
+        ConnectXGameState gameState = ConnectXGameState.of(3,4,3);
         gameState.applyMove(new DefaultGameMove("X",3));
         gameState.applyMove(new DefaultGameMove("O",1));
         gameState.applyMove(new DefaultGameMove("X",2));
@@ -39,7 +39,7 @@ public class ConnectXGameStateTest {
     
     @Test
     public void getAllValidMovesTest() {
-        ConnectXGameState gameState = new ConnectXGameState(3,3,3);
+        ConnectXGameState gameState = ConnectXGameState.of(3,3,3);
         gameState.applyMove(new DefaultGameMove("X",0));
         List<DefaultGameMove> moves = gameState.getAllValidMoves();
         int locationSum = 0;
@@ -52,7 +52,7 @@ public class ConnectXGameStateTest {
     
     @Test
     public void getValidMoveFromString() {
-        ConnectXGameState gameState = new ConnectXGameState(3,3,3);
+        ConnectXGameState gameState = ConnectXGameState.of(3,3,3);
         gameState.applyMove(new DefaultGameMove("X",0));
         DefaultGameMove move = gameState.getMoveFromString("0");
         assertEquals(move.getPlayerName(), "O");
@@ -61,7 +61,7 @@ public class ConnectXGameStateTest {
     
     @Test
     public void playFullGameTest() {
-        ConnectXGameState gameState = new ConnectXGameState(3,3,3);
+        ConnectXGameState gameState = ConnectXGameState.of(3,3,3);
         Game<DefaultGameMove, MNKGameState> game = new Game<>(gameState);
         game.addPlayer("X", AIPlayerFactory.getNewAIPlayer(gameState, 50));
         game.addPlayer("O", AIPlayerFactory.getNewAIPlayer(gameState, 50));

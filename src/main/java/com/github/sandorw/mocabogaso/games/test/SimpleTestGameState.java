@@ -89,6 +89,11 @@ public final class SimpleTestGameState implements GameState<DefaultGameMove, Def
     public DefaultGameResult getGameResult() {
         return new DefaultGameResult(getOppositePlayerName(lastPlayer), false);
     }
+    
+    @Override
+    public long getZobristHash() {
+        return (2L << moveSum) ^ lastPlayer.hashCode();
+    }
 
     public boolean equalsState(Object obj) {
        if (this.getClass() != obj.getClass())
@@ -97,7 +102,8 @@ public final class SimpleTestGameState implements GameState<DefaultGameMove, Def
             return true;
 
         SimpleTestGameState rhs = (SimpleTestGameState) obj;
-        return ((moveSum == rhs.moveSum) && (lastPlayer.equals(rhs.lastPlayer)));
+        return ((getZobristHash() == rhs.getZobristHash()) && (moveSum == rhs.moveSum) && 
+                (lastPlayer.equals(rhs.lastPlayer)));
     }
     
     public String toString() {
