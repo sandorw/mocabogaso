@@ -226,7 +226,7 @@ public class MNKGameState implements GameState<DefaultGameMove, DefaultGameResul
     }
     
     public boolean equalsState(Object obj) {
-       if (this.getClass() != obj.getClass())
+        if (this.getClass() != obj.getClass())
             return false;
         if (obj == this)
             return true;
