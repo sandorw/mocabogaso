@@ -1,6 +1,9 @@
 package com.github.sandorw.mocabogaso.ai.mcts;
 
+import java.lang.ref.WeakReference;
 import java.util.List;
+import java.util.Map;
+import java.util.WeakHashMap;
 
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -21,12 +24,14 @@ public final class MonteCarloSearchTree<GM extends GameMove, NR extends NodeResu
     private volatile int NODE_EXPAND_THRESHOLD = 10;
     private volatile float EXPLORATION_CONSTANT = 1.0f;
 	private final NodeResultsService<NR> nodeResultsService;
+	private final Map<Long, WeakReference<SearchTreeNode>> transpositionTable;
 	
 	public <GS extends GameState<GM, ? extends GameResult>> 
 	        MonteCarloSearchTree(NodeResultsService<NR> nrService, GS initialGameState) {
 		rootNode = null;
 		nodeResultsService = nrService;
 		rootNode = new SearchTreeNode(initialGameState);
+		transpositionTable = new WeakHashMap<>();
 	}
 	
 	public GM getMostSimulatedMove() {
@@ -36,7 +41,9 @@ public final class MonteCarloSearchTree<GM extends GameMove, NR extends NodeResu
 	public synchronized <GS extends GameState<GM, ? extends GameResult>> void advanceTree(GM move, GS resultingGameState) {
 	    SearchTreeNode newRoot = rootNode.findNodeWithMove(move);
 	    if (newRoot == null) {
-	        newRoot = new SearchTreeNode(resultingGameState);
+	        long zobristHash = resultingGameState.getZobristHash();
+            newRoot = new SearchTreeNode(resultingGameState);
+            transpositionTable.put(zobristHash, new WeakReference<>(newRoot));
 	    } else {
 	        newRoot.removeParentNodes();
 	    }
@@ -104,14 +111,22 @@ public final class MonteCarloSearchTree<GM extends GameMove, NR extends NodeResu
                     @SuppressWarnings("unchecked")
                     GS resultingGameState = (GS) gameState.getCopy();
                     resultingGameState.applyMove(move);
-                    SearchTreeNode childNode = new SearchTreeNode(resultingGameState);
+                    long zobristHash = resultingGameState.getZobristHash();
+                    SearchTreeNode childNode = null;
+                    if (transpositionTable.containsKey(zobristHash)) {
+                        childNode = transpositionTable.get(zobristHash).get();
+                    }
+                    if (childNode == null) {
+                        childNode = new SearchTreeNode(resultingGameState);
+                        transpositionTable.put(zobristHash, new WeakReference<>(childNode));
+                    }
                     childNode.addParentNode(this);
                     childNodes.add(Pair.of(move, childNode));
                 }
                 expanded = true;
             }
         }
-        
+
         private GM getMostSimulatedChildMove() {
             if (!expanded)
                 return null;
