@@ -27,4 +27,6 @@ public interface GameState<GM extends GameMove, GR extends GameResult> {
 
     GR getGameResult();
 
+    long getZobristHash();
+    
 }

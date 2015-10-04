@@ -21,9 +21,23 @@ public class MNKGameState implements GameState<DefaultGameMove, DefaultGameResul
     protected final int goalNumInARow;
     protected String nextPlayerName;
     protected String winningPlayerName;
+    protected long zobristHash;
+    protected final MNKZobristHashService zobristHashService;
     
     protected enum BoardStatus {
-        EMPTY, X, O;
+        X(0),
+        O(1),
+        EMPTY(2);
+        
+        private int index;
+        
+        BoardStatus(int index) {
+            this.index = index;
+        }
+        
+        public int getIndex() {
+            return index;
+        }
 
         @Override
         public String toString() {
@@ -35,7 +49,11 @@ public class MNKGameState implements GameState<DefaultGameMove, DefaultGameResul
         }
     }
     
-    public MNKGameState(int m, int n, int k) {
+    public static MNKGameState of(int m, int n, int k) {
+        return new MNKGameState(m, n, k, new MNKZobristHashService(m, n));
+    }
+    
+    protected MNKGameState(int m, int n, int k, MNKZobristHashService hashService) {
         numRows = m;
         numCols = n;
         if ((m < 1) || (n < 1))
@@ -51,16 +69,19 @@ public class MNKGameState implements GameState<DefaultGameMove, DefaultGameResul
                 boardLocation[i][j] = BoardStatus.EMPTY;
         nextPlayerName = "X";
         winningPlayerName = "";
+        zobristHashService = hashService;
+        zobristHash = 0L;
     }
     
     @Override
     public GameState<DefaultGameMove, DefaultGameResult> getCopy() {
-        MNKGameState copy = new MNKGameState(numRows, numCols, goalNumInARow);
+        MNKGameState copy = new MNKGameState(numRows, numCols, goalNumInARow, zobristHashService);
         for (int i=0; i < numRows; ++i)
             for (int j=0; j < numCols; ++j)
                 copy.boardLocation[i][j] = boardLocation[i][j];
         copy.nextPlayerName = nextPlayerName;
         copy.winningPlayerName = winningPlayerName;
+        copy.zobristHash = zobristHash;
         return copy;
     }
 
@@ -113,6 +134,7 @@ public class MNKGameState implements GameState<DefaultGameMove, DefaultGameResul
         int j = getColNumber(move.getLocation());
         BoardStatus newStatus = (move.getPlayerName().equals("X") ? BoardStatus.X : BoardStatus.O);
         boardLocation[i][j] = newStatus;
+        zobristHash ^= zobristHashService.getLocationHash(i,j,newStatus.getIndex());
         toggleCurrentPlayer();
         updateWinner(move);
     }
@@ -182,6 +204,11 @@ public class MNKGameState implements GameState<DefaultGameMove, DefaultGameResul
         return new DefaultGameResult(winningPlayerName, false);
     }
     
+    @Override
+    public long getZobristHash() {
+        return zobristHash;
+    }
+    
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("MNKGameState, m=" + numRows + ", n=" + numCols + ", k=" + goalNumInARow + "\n");
@@ -205,8 +232,8 @@ public class MNKGameState implements GameState<DefaultGameMove, DefaultGameResul
             return true;
 
         MNKGameState rhs = (MNKGameState) obj;
-        if ((numRows != rhs.numRows) || (numCols != rhs.numCols) || (goalNumInARow != rhs.goalNumInARow) ||
-                (!nextPlayerName.equals(rhs.nextPlayerName)))
+        if ((getZobristHash() != rhs.getZobristHash()) || (numRows != rhs.numRows) || (numCols != rhs.numCols) || 
+                (goalNumInARow != rhs.goalNumInARow) || (!nextPlayerName.equals(rhs.nextPlayerName)))
             return false;
         for (int i=0; i < numRows; ++i)
             for (int j=0; j < numCols; ++j)
