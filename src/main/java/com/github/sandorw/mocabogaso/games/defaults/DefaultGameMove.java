@@ -1,5 +1,7 @@
 package com.github.sandorw.mocabogaso.games.defaults;
 
+import java.util.Objects;
+
 import com.github.sandorw.mocabogaso.games.GameMove;
 
 /**
@@ -28,6 +30,22 @@ public final class DefaultGameMove implements GameMove {
     @Override
     public String toString() {
         return "DefaultGameMove: [current player: " + playerName + ", location: " + location + "]";
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+        if ((obj == null) || (this.getClass() != obj.getClass()))
+            return false;
+        if (obj == this)
+            return true;
+
+        DefaultGameMove rhs = (DefaultGameMove) obj;
+        return ((getLocation() == rhs.getLocation()) && (getPlayerName().equals(rhs.getPlayerName())));
+    }
+    
+    @Override
+    public int hashCode() {
+        return Objects.hash(playerName, location);
     }
 
 }
