@@ -1,6 +1,5 @@
 package com.github.sandorw.mocabogaso.ai.mcts;
 
-import com.github.sandorw.mocabogaso.games.GameMove;
 import com.github.sandorw.mocabogaso.games.GameResult;
 
 /**
@@ -14,6 +13,6 @@ public interface NodeResults {
 
     int getNumSimulations();
 
-    <GM extends GameMove, GR extends GameResult> void applyGameResult(GR gameResult);
+    <GR extends GameResult> void applyGameResult(GR gameResult);
 	
 }

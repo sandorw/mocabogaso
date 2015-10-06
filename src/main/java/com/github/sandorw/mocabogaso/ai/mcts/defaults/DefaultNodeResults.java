@@ -3,7 +3,6 @@ package com.github.sandorw.mocabogaso.ai.mcts.defaults;
 import java.util.Map;
 
 import com.github.sandorw.mocabogaso.ai.mcts.NodeResults;
-import com.github.sandorw.mocabogaso.games.GameMove;
 import com.github.sandorw.mocabogaso.games.GameResult;
 import com.github.sandorw.mocabogaso.games.GameState;
 import com.google.common.collect.Maps;
@@ -39,7 +38,7 @@ public final class DefaultNodeResults implements NodeResults {
     }
     
     @Override
-    public <GM extends GameMove, GR extends GameResult> void applyGameResult(GR gameResult) {
+    public <GR extends GameResult> void applyGameResult(GR gameResult) {
         ++numSimulations;
         if (gameResult.isTie()) {
             for (Map.Entry<String,Float> entry : playerScoreMap.entrySet()) {
