@@ -85,6 +85,55 @@ public final class MonteCarloSearchTreeTest {
         assertTrue(iterator.hasNext());
     }
     
+    @Test
+    public void multipleParentTranspositionTableTest() {
+        searchTree.setNodeExpandThreshold(0);
+        SearchTreeIterator<DefaultGameMove,DefaultNodeResults> iterator = searchTree.iterator();
+        iterator.expandNode(gameState);
+        SimpleTestGameState copy = (SimpleTestGameState) gameState.getCopy();
+        DefaultGameMove move = new DefaultGameMove("Player 1", 1);
+        copy.applyMove(move);
+        boolean expandedNode = false;
+        while (iterator.hasNextChild()) {
+            iterator.advanceChildNode();
+            if (iterator.getCurrentChildMove().equals(move)) {
+                iterator.getCurrentChildIterator().expandNode(copy);
+                expandedNode = true;
+                break;
+            }
+        }
+        assertTrue(expandedNode);
+        copy = (SimpleTestGameState) gameState.getCopy();
+        move = new DefaultGameMove("Player 1", 3);
+        copy.applyMove(move);
+        expandedNode = false;
+        iterator = searchTree.iterator();
+        while (iterator.hasNextChild()) {
+            iterator.advanceChildNode();
+            if (iterator.getCurrentChildMove().equals(move)) {
+                iterator.getCurrentChildIterator().expandNode(copy);
+                expandedNode = true;
+                break;
+            }
+        }
+        assertTrue(expandedNode);
+        iterator = iterator.getCurrentChildIterator();
+        move = new DefaultGameMove("Player 2", 1);
+        while (iterator.hasNextChild()) {
+            iterator.advanceChildNode();
+            if (iterator.getCurrentChildMove().equals(move)) {
+                break;
+            }
+        }
+        iterator = iterator.getCurrentChildIterator();
+        int numParents = 0;
+        while (iterator.hasNextParent()) {
+            ++numParents;
+            iterator.advanceParentNode();
+        }
+        assertEquals(numParents, 2);
+    }
+    
     /**
      * Iterator tests
      */
