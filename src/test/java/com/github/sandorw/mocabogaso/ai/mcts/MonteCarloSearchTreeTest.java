@@ -191,5 +191,16 @@ public final class MonteCarloSearchTreeTest {
         SearchTreeIterator<DefaultGameMove,DefaultNodeResults> iterator = searchTree.iterator();
         DefaultNodeResults nodeResults = iterator.getCurrentNodeResults();
         assertEquals(nodeResults.getNumSimulations(), 0);
-    }	
+    }
+    
+    @Test
+    public void getParentMoveTest() {
+        SearchTreeIterator<DefaultGameMove,DefaultNodeResults> iterator = searchTree.iterator();
+        iterator.expandNode(gameState);
+        iterator.advanceChildNode();
+        DefaultGameMove move = iterator.getCurrentChildMove();
+        iterator = iterator.getCurrentChildIterator();
+        iterator.advanceParentNode();
+        assertEquals(move, iterator.getCurrentParentMove());
+    }
 }

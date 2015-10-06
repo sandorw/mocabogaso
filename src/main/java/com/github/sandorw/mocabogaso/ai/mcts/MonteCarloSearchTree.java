@@ -70,9 +70,9 @@ public final class MonteCarloSearchTree<GM extends GameMove, NR extends NodeResu
 	 * @author sandorw
 	 */
 	private final class SearchTreeNode {
-		private final List<SearchTreeNode> parentNodes;
+		private final List<Pair<GM,SearchTreeNode>> parentNodes;
 		private volatile boolean expanded;
-		private volatile List<Pair<GM,SearchTreeNode>> childNodes;
+		private final List<Pair<GM,SearchTreeNode>> childNodes;
 		private final NR nodeResults;
 		
         private <GS extends GameState<GM, ? extends GameResult>>
@@ -83,8 +83,8 @@ public final class MonteCarloSearchTree<GM extends GameMove, NR extends NodeResu
         	nodeResults = nodeResultsService.getNewNodeResults(resultingGameState);
         }
         
-        private void addParentNode(SearchTreeNode parent) {
-            parentNodes.add(parent);
+        private void addParentNode(GM moveMade, SearchTreeNode parent) {
+            parentNodes.add(Pair.of(moveMade, parent));
         }
         
         private void removeParentNodes() {
@@ -120,7 +120,7 @@ public final class MonteCarloSearchTree<GM extends GameMove, NR extends NodeResu
                         childNode = new SearchTreeNode(resultingGameState);
                         transpositionTable.put(zobristHash, new WeakReference<>(childNode));
                     }
-                    childNode.addParentNode(this);
+                    childNode.addParentNode(move, this);
                     childNodes.add(Pair.of(move, childNode));
                 }
                 expanded = true;
@@ -236,7 +236,11 @@ public final class MonteCarloSearchTree<GM extends GameMove, NR extends NodeResu
 	    }
 	    
 	    public SearchTreeIterator<GM,NR> getCurrentParentIterator() {
-	        return new SearchTreeIterator<>(currentNode.parentNodes.get(currentParentIndex));
+	        return new SearchTreeIterator<>(currentNode.parentNodes.get(currentParentIndex).getRight());
+	    }
+	    
+	    public GM getCurrentParentMove() {
+	        return currentNode.parentNodes.get(currentParentIndex).getLeft();
 	    }
 	}
 }
