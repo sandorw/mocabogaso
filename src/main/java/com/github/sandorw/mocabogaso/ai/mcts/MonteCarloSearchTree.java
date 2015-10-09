@@ -21,7 +21,7 @@ import com.google.common.collect.Lists;
  */
 public final class MonteCarloSearchTree<GM extends GameMove, NR extends NodeResults> {
 	private volatile SearchTreeNode rootNode;
-    private volatile int NODE_EXPAND_THRESHOLD = 10;
+    private volatile int NODE_EXPAND_THRESHOLD = 5;
     private volatile float EXPLORATION_CONSTANT = 1.0f;
 	private final NodeResultsService<NR> nodeResultsService;
 	private final Map<Long, WeakReference<SearchTreeNode>> transpositionTable;
