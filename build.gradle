@@ -3,6 +3,13 @@ apply plugin: 'eclipse'
 apply plugin: 'jacoco'
 apply plugin: 'com.github.kt3k.coveralls'
 apply plugin: 'findbugs'
+apply plugin: 'application'
+
+mainClassName = "com.github.sandorw.mocabogaso.Mocabogaso"
+
+run{
+	standardInput = System.in
+}
 
 buildscript {
 	repositories {

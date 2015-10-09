@@ -3,6 +3,8 @@ package com.github.sandorw.mocabogaso.players;
 import com.github.sandorw.mocabogaso.ai.AIService;
 import com.github.sandorw.mocabogaso.ai.mcts.MonteCarloSearchService;
 import com.github.sandorw.mocabogaso.ai.mcts.PlayoutPolicy;
+import com.github.sandorw.mocabogaso.ai.mcts.amaf.AMAFMonteCarloSearchService;
+import com.github.sandorw.mocabogaso.ai.mcts.amaf.AMAFNodeResultsService;
 import com.github.sandorw.mocabogaso.ai.mcts.defaults.DefaultNodeResultsService;
 import com.github.sandorw.mocabogaso.ai.mcts.policies.RandomMovePlayoutPolicy;
 import com.github.sandorw.mocabogaso.games.GameMove;
@@ -24,4 +26,11 @@ public final class AIPlayerFactory {
         return new AIPlayer<>(aiService, timePerMoveMs);
     }
     
+    public static <GM extends GameMove, GS extends GameState<GM, ? extends GameResult>> 
+            Player<GM> getNewAMAFAIPlayer(GS initialGameState, int timePerMoveMs) {
+        AMAFNodeResultsService nodeResultsService = new AMAFNodeResultsService();
+        PlayoutPolicy policy = new RandomMovePlayoutPolicy();
+        AIService<GM> aiService = new AMAFMonteCarloSearchService<>(nodeResultsService, policy, initialGameState);
+        return new AIPlayer<>(aiService, timePerMoveMs);
+    }
 }
