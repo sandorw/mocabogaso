@@ -64,10 +64,7 @@ public class AMAFNodeResults implements NodeResults {
     
     private <GR extends GameResult> void applyGameResultToScoreMap(GR gameResult, Map<String,Float> scoreMap) {
         if (gameResult.isTie()) {
-            for (Map.Entry<String,Float> entry : scoreMap.entrySet()) {
-                String playerName = entry.getKey();
-                scoreMap.put(playerName, entry.getValue() + TIE_VALUE);
-            }
+            scoreMap.forEach((name, score) -> scoreMap.put(name, score + TIE_VALUE));
         } else {
             String winningPlayerName = gameResult.getWinningPlayer();
             scoreMap.put(winningPlayerName, scoreMap.get(winningPlayerName) + WIN_VALUE);

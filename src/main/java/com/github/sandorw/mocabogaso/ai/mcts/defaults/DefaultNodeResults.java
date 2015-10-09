@@ -41,10 +41,7 @@ public final class DefaultNodeResults implements NodeResults {
     public <GR extends GameResult> void applyGameResult(GR gameResult) {
         ++numSimulations;
         if (gameResult.isTie()) {
-            for (Map.Entry<String,Float> entry : playerScoreMap.entrySet()) {
-                String playerName = entry.getKey();
-                playerScoreMap.put(playerName, entry.getValue() + TIE_VALUE);
-            }
+            playerScoreMap.forEach((name, score) -> playerScoreMap.put(name, score + TIE_VALUE));
         } else {
             String winningPlayerName = gameResult.getWinningPlayer();
             playerScoreMap.put(winningPlayerName, playerScoreMap.get(winningPlayerName) + WIN_VALUE);
