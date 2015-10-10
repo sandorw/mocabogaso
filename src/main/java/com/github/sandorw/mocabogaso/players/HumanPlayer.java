@@ -36,4 +36,6 @@ public final class HumanPlayer<GM extends GameMove> implements Player<GM> {
     public <GS extends GameState<GM, ? extends GameResult>> 
         void informOfMoveMade(GM move, GS resultingGameState) {}
 
+    @Override
+    public void shutdown() {}
 }

@@ -38,17 +38,21 @@ public final class Game<GM extends GameMove, GS extends GameState<GM, ? extends 
             System.out.println(globalGameState.toString());
         }
         System.out.println(getGameResult().toString());
+        shutdown();
     }
     
     private void validatePlayers() {
         List<String> playerNames = globalGameState.getAllPlayerNames();
         List<String> missingPlayers = Lists.newArrayList();
-        for (String name : playerNames)
-            if (!players.containsKey(name))
+        for (String name : playerNames) {
+            if (!players.containsKey(name)) {
                 missingPlayers.add(name);
-        if (!missingPlayers.isEmpty())
+            }
+        }
+        if (!missingPlayers.isEmpty()) {
             throw new IllegalStateException("Players named " + String.join(", ", missingPlayers) + 
                     " are not represented in the game");
+        }
     }
     
     public boolean isGameOver() {
@@ -63,12 +67,19 @@ public final class Game<GM extends GameMove, GS extends GameState<GM, ? extends 
     private void applyMove(GM move) {
         globalGameState.applyMove(move);
         moveHistory.add(move);
-        for (Player<GM> player : players.values())
+        for (Player<GM> player : players.values()) {
             player.informOfMoveMade(move, globalGameState.getCopy());
+        }
     }
     
     public GameResult getGameResult() {
         return globalGameState.getGameResult();
+    }
+    
+    public void shutdown() {
+        for (Player<GM> player : players.values()) {
+            player.shutdown();
+        }
     }
     
 }
