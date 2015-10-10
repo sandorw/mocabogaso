@@ -44,8 +44,8 @@ public final class AIPlayerFactoryTest {
     
     @Test
     public void multiThreadedAMAFAIPlayerTest() {
-        game.addPlayer("Player 1", AIPlayerFactory.getNewMultiThreadedAMAFAIPlayer(gameState, 50, 1));
-        game.addPlayer("Player 2", AIPlayerFactory.getNewMultiThreadedAMAFAIPlayer(gameState, 50, 1));
+        game.addPlayer("Player 1", AIPlayerFactory.getNewMultiThreadedAMAFAIPlayer(gameState, 50, 2));
+        game.addPlayer("Player 2", AIPlayerFactory.getNewMultiThreadedAMAFAIPlayer(gameState, 50, 2));
         game.playGame();
         assertTrue(game.isGameOver());
         assertFalse(game.getGameResult().isTie());
