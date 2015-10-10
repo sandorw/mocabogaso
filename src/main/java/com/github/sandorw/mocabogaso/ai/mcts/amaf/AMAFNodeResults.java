@@ -1,12 +1,13 @@
 package com.github.sandorw.mocabogaso.ai.mcts.amaf;
 
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import com.github.sandorw.mocabogaso.ai.mcts.NodeResults;
 import com.github.sandorw.mocabogaso.games.GameMove;
 import com.github.sandorw.mocabogaso.games.GameResult;
 import com.github.sandorw.mocabogaso.games.GameState;
-import com.google.common.collect.Maps;
+import com.google.common.collect.MapMaker;
 
 /**
  * Node results that include AMAF results - results propagated to nodes that were not visited in
@@ -18,56 +19,61 @@ import com.google.common.collect.Maps;
 public class AMAFNodeResults implements NodeResults {
     private final Map<String,Float> playerScoreMap;
     private final Map<String,Float> amafScoreMap;
-    private int numSimulations;
-    private int numRAVESimulations;
+    private AtomicInteger numSimulations;
+    private AtomicInteger numRAVESimulations;
     
     private static float WIN_VALUE = 1.0f;
     private static float TIE_VALUE = 0.25f;
     private static int SIMS_EQUIV = 1000;
     
     public AMAFNodeResults(GameState<?,?> gameState) {
-        playerScoreMap = Maps.newHashMap();
-        amafScoreMap = Maps.newHashMap();
+        playerScoreMap = new MapMaker()
+                .concurrencyLevel(4)
+                .initialCapacity(4)
+                .makeMap();
+        amafScoreMap = new MapMaker()
+                .concurrencyLevel(4)
+                .initialCapacity(4)
+                .makeMap();
         for (String playerName : gameState.getAllPlayerNames()) {
             playerScoreMap.put(playerName, 0.0f);
             amafScoreMap.put(playerName, 0.0f);
         }
-        numSimulations = 0;
-        numRAVESimulations = 0;
+        numSimulations = new AtomicInteger(0);
+        numRAVESimulations = new AtomicInteger(0);
     }
 
     @Override
     public int getNumSimulations() {
-        return numSimulations;
+        return numSimulations.get();
     }
     
     @Override
     public float getValue(String evaluatingPlayerName) {
-        if (numSimulations + numRAVESimulations == 0)
+        int numSims = numSimulations.get();
+        int numRAVESims = numRAVESimulations.get();
+        if (numSims + numRAVESims == 0)
             return 0.0f;
-        float beta = numRAVESimulations/(numRAVESimulations + numSimulations + (float)numRAVESimulations*numSimulations/SIMS_EQUIV);
-        float RAVEterm = (numRAVESimulations == 0 ? 0.0f : beta*amafScoreMap.get(evaluatingPlayerName)/numRAVESimulations);
-        float normterm = (numSimulations == 0 ? 0.0f : (1.0f-beta)*playerScoreMap.get(evaluatingPlayerName)/numSimulations);
+        float beta = numRAVESims/(numRAVESims + numSims + (float)numRAVESims*numSims/SIMS_EQUIV);
+        float RAVEterm = (numRAVESims == 0 ? 0.0f : beta*amafScoreMap.get(evaluatingPlayerName)/numRAVESims);
+        float normterm = (numSims == 0 ? 0.0f : (1.0f-beta)*playerScoreMap.get(evaluatingPlayerName)/numSims);
         return RAVEterm + normterm;
     }
     
     @Override
     public <GR extends GameResult> void applyGameResult(GR gameResult) {
-        ++numSimulations;
+        numSimulations.incrementAndGet();
         applyGameResultToScoreMap(gameResult, playerScoreMap);
     }
     
     public <GM extends GameMove, GR extends GameResult> void applyAMAFGameResult(GR gameResult) {
-        ++numRAVESimulations;
+        numRAVESimulations.incrementAndGet();
         applyGameResultToScoreMap(gameResult, amafScoreMap);
     }
     
     private <GR extends GameResult> void applyGameResultToScoreMap(GR gameResult, Map<String,Float> scoreMap) {
         if (gameResult.isTie()) {
-            for (Map.Entry<String,Float> entry : scoreMap.entrySet()) {
-                String playerName = entry.getKey();
-                scoreMap.put(playerName, entry.getValue() + TIE_VALUE);
-            }
+            scoreMap.forEach((name, score) -> scoreMap.put(name, score + TIE_VALUE));
         } else {
             String winningPlayerName = gameResult.getWinningPlayer();
             scoreMap.put(winningPlayerName, scoreMap.get(winningPlayerName) + WIN_VALUE);

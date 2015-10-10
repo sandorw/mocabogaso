@@ -14,9 +14,9 @@ import com.github.sandorw.mocabogaso.games.GameState;
  * @author sandorw
  */
 public final class MonteCarloSearchService<GM extends GameMove, NR extends NodeResults> implements AIService<GM> {
-	private MonteCarloSearchTree<GM,NR> searchTree;
-	private PlayoutPolicy playoutPolicy;
-	private NodeResultsService<NR> nodeResultsService;
+	private final MonteCarloSearchTree<GM,NR> searchTree;
+	private final PlayoutPolicy playoutPolicy;
+	private final NodeResultsService<NR> nodeResultsService;
 	
 	public <GS extends GameState<GM, ? extends GameResult>> 
 	        MonteCarloSearchService(NodeResultsService<NR> nodeResultsService, PlayoutPolicy policy, GS initialGameState) {
