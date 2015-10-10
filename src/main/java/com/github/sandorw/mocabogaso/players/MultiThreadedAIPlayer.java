@@ -47,4 +47,8 @@ public class MultiThreadedAIPlayer<GM extends GameMove> implements Player<GM> {
         aiService.applyMove(move, resultingGameState);
     }
 
+    @Override
+    public void shutdown() {
+        executor.shutdownNow();
+    }
 }

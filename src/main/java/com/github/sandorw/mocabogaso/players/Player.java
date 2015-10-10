@@ -15,4 +15,5 @@ public interface Player<GM extends GameMove> {
 	
 	<GS extends GameState<GM, ? extends GameResult>> void informOfMoveMade(GM move, GS resultingGameState);
 	
+	void shutdown();
 }
