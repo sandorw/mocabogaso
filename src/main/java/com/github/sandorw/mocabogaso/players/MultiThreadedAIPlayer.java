@@ -15,28 +15,29 @@ import com.github.sandorw.mocabogaso.games.GameState;
  */
 public class MultiThreadedAIPlayer<GM extends GameMove> implements Player<GM> {
     private final AIService<GM> aiService;
-    private int allottedTimeMs;
+    private final int allottedTimeMs;
+    private final int numThreads;
     private final ExecutorService executor;
     
-    public MultiThreadedAIPlayer(AIService<GM> aiService, int allottedTimeMs) {
+    public MultiThreadedAIPlayer(AIService<GM> aiService, int allottedTimeMs, int numThreads) {
         this.aiService = aiService;
         this.allottedTimeMs = allottedTimeMs;
-        executor = Executors.newSingleThreadExecutor();
+        this.numThreads = numThreads;
+        executor = Executors.newFixedThreadPool(numThreads);
     }
     
     @Override
     public <GS extends GameState<GM, ? extends GameResult>> GM chooseNextMove(GS currentGameState) {
-        
-        executor.submit(() -> {
-            aiService.searchMoves(currentGameState, allottedTimeMs);
-        });
-        
+        for (int i=0; i < numThreads; ++i) {
+            executor.submit(() -> {
+                aiService.searchMoves(currentGameState, allottedTimeMs);
+            });
+        }
         try {
             Thread.sleep(allottedTimeMs);
         } catch (InterruptedException e) {
             return aiService.selectMove();
         }
-        
         return aiService.selectMove();
     }
 

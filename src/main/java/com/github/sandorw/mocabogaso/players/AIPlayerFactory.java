@@ -35,10 +35,10 @@ public final class AIPlayerFactory {
     }
     
     public static <GM extends GameMove, GS extends GameState<GM, ? extends GameResult>> 
-            Player<GM> getNewMultiThreadedAMAFAIPlayer(GS initialGameState, int timePerMoveMs) {
+            Player<GM> getNewMultiThreadedAMAFAIPlayer(GS initialGameState, int timePerMoveMs, int numThreads) {
         AMAFNodeResultsService nodeResultsService = new AMAFNodeResultsService();
         PlayoutPolicy policy = new RandomMovePlayoutPolicy();
         AIService<GM> aiService = new AMAFMonteCarloSearchService<>(nodeResultsService, policy, initialGameState);
-        return new MultiThreadedAIPlayer<>(aiService, timePerMoveMs);
+        return new MultiThreadedAIPlayer<>(aiService, timePerMoveMs, numThreads);
     }
 }

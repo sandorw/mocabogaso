@@ -12,7 +12,7 @@ import com.github.sandorw.mocabogaso.games.GameState;
  */
 public final class AIPlayer<GM extends GameMove> implements Player<GM> {
     private final AIService<GM> aiService;
-    private int allottedTimeMs;
+    private final int allottedTimeMs;
     
     public AIPlayer(AIService<GM> aiService, int allottedTimeMs) {
         this.aiService = aiService;
