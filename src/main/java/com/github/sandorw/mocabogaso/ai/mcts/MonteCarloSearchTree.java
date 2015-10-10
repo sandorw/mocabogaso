@@ -159,6 +159,8 @@ public final class MonteCarloSearchTree<GM extends GameMove, NR extends NodeResu
         }
         
         private SearchTreeNode findNodeWithMove(GM move) {
+            if (!expanded)
+                return null;
             SearchTreeNode node = null;
             for (Pair<GM,SearchTreeNode> pair : childNodes) {
                 if (move.equals(pair.getLeft())) {

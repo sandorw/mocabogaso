@@ -10,7 +10,7 @@ public class Mocabogaso {
     public static void main(String args[]) {
         HexGameState gameState = HexGameState.of(9);
         Game<DefaultGameMove, HexGameState> game = new Game<>(gameState);
-        game.addPlayer("X", AIPlayerFactory.getNewAMAFAIPlayer(gameState, 5000));
+        game.addPlayer("X", AIPlayerFactory.getNewMultiThreadedAMAFAIPlayer(gameState, 5000));
         game.addPlayer("O", new HumanPlayer<>());
         game.playGame();
     }

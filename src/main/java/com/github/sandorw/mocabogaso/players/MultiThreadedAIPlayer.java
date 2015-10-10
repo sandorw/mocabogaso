@@ -1,27 +1,42 @@
 package com.github.sandorw.mocabogaso.players;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import com.github.sandorw.mocabogaso.ai.AIService;
 import com.github.sandorw.mocabogaso.games.GameMove;
 import com.github.sandorw.mocabogaso.games.GameResult;
 import com.github.sandorw.mocabogaso.games.GameState;
 
 /**
- * Implementation of Player for AI players. Leverages a AIService for move search and generation.
+ * Multithreaded AI Player implementation.
  * 
  * @author sandorw
  */
-public final class AIPlayer<GM extends GameMove> implements Player<GM> {
+public class MultiThreadedAIPlayer<GM extends GameMove> implements Player<GM> {
     private final AIService<GM> aiService;
     private int allottedTimeMs;
+    private final ExecutorService executor;
     
-    public AIPlayer(AIService<GM> aiService, int allottedTimeMs) {
+    public MultiThreadedAIPlayer(AIService<GM> aiService, int allottedTimeMs) {
         this.aiService = aiService;
         this.allottedTimeMs = allottedTimeMs;
+        executor = Executors.newSingleThreadExecutor();
     }
     
     @Override
     public <GS extends GameState<GM, ? extends GameResult>> GM chooseNextMove(GS currentGameState) {
-        aiService.searchMoves(currentGameState, allottedTimeMs);
+        
+        executor.submit(() -> {
+            aiService.searchMoves(currentGameState, allottedTimeMs);
+        });
+        
+        try {
+            Thread.sleep(allottedTimeMs);
+        } catch (InterruptedException e) {
+            return aiService.selectMove();
+        }
+        
         return aiService.selectMove();
     }
 

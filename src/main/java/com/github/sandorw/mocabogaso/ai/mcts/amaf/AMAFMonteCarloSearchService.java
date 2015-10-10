@@ -18,9 +18,9 @@ import com.google.common.collect.Sets;
  * @author sandorw
  */
 public final class AMAFMonteCarloSearchService<GM extends GameMove> implements AIService<GM> {
-    private MonteCarloSearchTree<GM,AMAFNodeResults> searchTree;
-    private PlayoutPolicy playoutPolicy;
-    private AMAFNodeResultsService nodeResultsService;
+    private final MonteCarloSearchTree<GM,AMAFNodeResults> searchTree;
+    private final PlayoutPolicy playoutPolicy;
+    private final AMAFNodeResultsService nodeResultsService;
     
     public <GS extends GameState<GM, ? extends GameResult>> 
             AMAFMonteCarloSearchService(AMAFNodeResultsService nodeResultsService, PlayoutPolicy policy, GS initialGameState) {
