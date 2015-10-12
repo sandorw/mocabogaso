@@ -16,8 +16,8 @@ public class TicTacToeGameStateTest {
     public void playFullGameTest() {
         TicTacToeGameState gameState = TicTacToeGameState.of();
         Game<DefaultGameMove, MNKGameState> game = new Game<>(gameState);
-        game.addPlayer("X", AIPlayerFactory.getNewAIPlayer(gameState, 50));
-        game.addPlayer("O", AIPlayerFactory.getNewAIPlayer(gameState, 50));
+        game.addPlayer("X", AIPlayerFactory.getNewAIPlayer(gameState, 150));
+        game.addPlayer("O", AIPlayerFactory.getNewAIPlayer(gameState, 150));
         game.playGame();
         assertTrue(game.isGameOver());
         GameResult gameResult = game.getGameResult();
