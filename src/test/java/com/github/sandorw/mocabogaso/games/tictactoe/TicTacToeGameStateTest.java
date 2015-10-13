@@ -10,6 +10,11 @@ import com.github.sandorw.mocabogaso.games.defaults.DefaultGameMove;
 import com.github.sandorw.mocabogaso.games.mnkgame.MNKGameState;
 import com.github.sandorw.mocabogaso.players.AIPlayerFactory;
 
+/**
+ * Test cases for TicTacToeGameState
+ * 
+ * @author sandorw
+ */
 public class TicTacToeGameStateTest {
 
     @Test
