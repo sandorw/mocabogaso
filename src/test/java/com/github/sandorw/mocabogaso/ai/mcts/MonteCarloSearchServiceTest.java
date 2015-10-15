@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 
 import com.github.sandorw.mocabogaso.ai.mcts.defaults.DefaultNodeResults;
+import com.github.sandorw.mocabogaso.ai.mcts.defaults.DefaultNodeResultsFactory;
 import com.github.sandorw.mocabogaso.ai.mcts.defaults.DefaultNodeResultsService;
 import com.github.sandorw.mocabogaso.ai.mcts.policies.FirstMoveTestPlayoutPolicy;
 import com.github.sandorw.mocabogaso.games.defaults.DefaultGameMove;
@@ -20,7 +21,8 @@ public final class MonteCarloSearchServiceTest {
     @Test
     public void searchProducesValidMovesTest() {
         SimpleTestGameState gameState = new SimpleTestGameState();
-        DefaultNodeResultsService nodeResultsService = new DefaultNodeResultsService();
+        NodeResultsFactory<DefaultNodeResults> nodeResultsFactory = new DefaultNodeResultsFactory();
+        DefaultNodeResultsService<DefaultNodeResults> nodeResultsService = new DefaultNodeResultsService<>(nodeResultsFactory);
         PlayoutPolicy policy = new FirstMoveTestPlayoutPolicy();
         MonteCarloSearchService<DefaultGameMove,DefaultNodeResults> searchService = new MonteCarloSearchService<>(nodeResultsService, policy, gameState);
         searchService.searchMoves(gameState, 50);
@@ -38,7 +40,8 @@ public final class MonteCarloSearchServiceTest {
         gameState.applyMove(new DefaultGameMove("Player 1", 3));
         gameState.applyMove(new DefaultGameMove("Player 2", 3));
         gameState.applyMove(new DefaultGameMove("Player 1", 2));
-        DefaultNodeResultsService nodeResultsService = new DefaultNodeResultsService();
+        NodeResultsFactory<DefaultNodeResults> nodeResultsFactory = new DefaultNodeResultsFactory();
+        DefaultNodeResultsService<DefaultNodeResults> nodeResultsService = new DefaultNodeResultsService<>(nodeResultsFactory);
         PlayoutPolicy policy = new FirstMoveTestPlayoutPolicy();
         MonteCarloSearchService<DefaultGameMove,DefaultNodeResults> searchService = new MonteCarloSearchService<>(nodeResultsService, policy, gameState);
         searchService.searchMoves(gameState, 50);

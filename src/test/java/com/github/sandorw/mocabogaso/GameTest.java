@@ -9,7 +9,10 @@ import org.junit.rules.ExpectedException;
 
 import com.github.sandorw.mocabogaso.ai.AIService;
 import com.github.sandorw.mocabogaso.ai.mcts.MonteCarloSearchService;
+import com.github.sandorw.mocabogaso.ai.mcts.NodeResultsFactory;
 import com.github.sandorw.mocabogaso.ai.mcts.PlayoutPolicy;
+import com.github.sandorw.mocabogaso.ai.mcts.defaults.DefaultNodeResults;
+import com.github.sandorw.mocabogaso.ai.mcts.defaults.DefaultNodeResultsFactory;
 import com.github.sandorw.mocabogaso.ai.mcts.defaults.DefaultNodeResultsService;
 import com.github.sandorw.mocabogaso.ai.mcts.policies.FirstMoveTestPlayoutPolicy;
 import com.github.sandorw.mocabogaso.games.defaults.DefaultGameMove;
@@ -44,7 +47,8 @@ public class GameTest {
 
     @Test
     public void successfulGameCompletionTest() {
-        DefaultNodeResultsService nodeResultsService = new DefaultNodeResultsService();
+        NodeResultsFactory<DefaultNodeResults> nodeResultsFactory = new DefaultNodeResultsFactory();
+        DefaultNodeResultsService<DefaultNodeResults> nodeResultsService = new DefaultNodeResultsService<>(nodeResultsFactory);
         PlayoutPolicy policy = new FirstMoveTestPlayoutPolicy();
         AIService<DefaultGameMove> aiService = 
                 new MonteCarloSearchService<>(nodeResultsService, policy, gameState);

@@ -8,6 +8,7 @@ import org.junit.Test;
 
 import com.github.sandorw.mocabogaso.ai.mcts.MonteCarloSearchTree;
 import com.github.sandorw.mocabogaso.ai.mcts.MonteCarloSearchTree.SearchTreeIterator;
+import com.github.sandorw.mocabogaso.ai.mcts.NodeResultsFactory;
 import com.github.sandorw.mocabogaso.games.defaults.DefaultGameMove;
 import com.github.sandorw.mocabogaso.games.defaults.DefaultGameResult;
 import com.github.sandorw.mocabogaso.games.test.SimpleTestGameState;
@@ -22,10 +23,11 @@ public class AMAFNodeResultsServiceTest {
     
     @Test
     public void propagateAMAFGameResultTest() {
-        AMAFNodeResultsService nodeResultsService = new AMAFNodeResultsService();
+        NodeResultsFactory<DefaultAMAFNodeResults> nodeResultsFactory = new DefaultAMAFNodeResultsFactory();
+        AMAFNodeResultsService<DefaultAMAFNodeResults> nodeResultsService = new AMAFNodeResultsService<>(nodeResultsFactory);
         SimpleTestGameState gameState = new SimpleTestGameState();
-        MonteCarloSearchTree<DefaultGameMove,AMAFNodeResults> searchTree = new MonteCarloSearchTree<>(nodeResultsService, gameState);
-        SearchTreeIterator<DefaultGameMove,AMAFNodeResults> iterator = searchTree.iterator();
+        MonteCarloSearchTree<DefaultGameMove,DefaultAMAFNodeResults> searchTree = new MonteCarloSearchTree<>(nodeResultsService, gameState);
+        SearchTreeIterator<DefaultGameMove,DefaultAMAFNodeResults> iterator = searchTree.iterator();
         iterator.expandNode(gameState);
         DefaultGameMove move = new DefaultGameMove("Player 1", 1);
         while (iterator.hasNextChild()) {
@@ -47,7 +49,7 @@ public class AMAFNodeResultsServiceTest {
             }
         }
         iterator = iterator.getCurrentChildIterator();
-        AMAFNodeResults nodeResults = iterator.getCurrentNodeResults();
+        DefaultAMAFNodeResults nodeResults = iterator.getCurrentNodeResults();
         assertTrue(nodeResults.getValue("Player 1") > 0.0f);
         assertEquals(nodeResults.getNumSimulations(), 0);
         move = new DefaultGameMove("Player 1", 2);

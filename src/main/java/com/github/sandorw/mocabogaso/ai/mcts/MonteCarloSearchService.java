@@ -1,5 +1,8 @@
 package com.github.sandorw.mocabogaso.ai.mcts;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.github.sandorw.mocabogaso.ai.AIService;
 import com.github.sandorw.mocabogaso.ai.mcts.MonteCarloSearchTree.SearchTreeIterator;
 import com.github.sandorw.mocabogaso.games.GameMove;
@@ -14,6 +17,8 @@ import com.github.sandorw.mocabogaso.games.GameState;
  * @author sandorw
  */
 public final class MonteCarloSearchService<GM extends GameMove, NR extends NodeResults> implements AIService<GM> {
+    private static Logger LOGGER = LoggerFactory.getLogger(MonteCarloSearchService.class);
+    
 	private final MonteCarloSearchTree<GM,NR> searchTree;
 	private final PlayoutPolicy playoutPolicy;
 	private final NodeResultsService<NR> nodeResultsService;
@@ -28,11 +33,14 @@ public final class MonteCarloSearchService<GM extends GameMove, NR extends NodeR
 	@Override
 	public <GS extends GameState<GM, ? extends GameResult>>
 	        void searchMoves(GS currentGameState, int allottedTimeMs) {
+	    int numSimulations = 0;
 	    long timeout = System.currentTimeMillis() + (long)allottedTimeMs;
 	    searchTree.iterator().expandNode(currentGameState);
 	    while (System.currentTimeMillis() < timeout) {
 	        performPlayoutSimulation(currentGameState.getCopy());
+	        ++numSimulations;
 	    }
+	    LOGGER.info("Performed {} simulations in {} ms", numSimulations, allottedTimeMs);
 	}
 	
 	private <GS extends GameState<GM, ? extends GameResult>> void performPlayoutSimulation(GS playoutGameState) {

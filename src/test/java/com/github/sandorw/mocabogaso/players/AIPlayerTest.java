@@ -7,8 +7,10 @@ import org.junit.Test;
 
 import com.github.sandorw.mocabogaso.ai.AIService;
 import com.github.sandorw.mocabogaso.ai.mcts.MonteCarloSearchService;
+import com.github.sandorw.mocabogaso.ai.mcts.NodeResultsFactory;
 import com.github.sandorw.mocabogaso.ai.mcts.PlayoutPolicy;
 import com.github.sandorw.mocabogaso.ai.mcts.defaults.DefaultNodeResults;
+import com.github.sandorw.mocabogaso.ai.mcts.defaults.DefaultNodeResultsFactory;
 import com.github.sandorw.mocabogaso.ai.mcts.defaults.DefaultNodeResultsService;
 import com.github.sandorw.mocabogaso.ai.mcts.policies.FirstMoveTestPlayoutPolicy;
 import com.github.sandorw.mocabogaso.games.defaults.DefaultGameMove;
@@ -25,7 +27,8 @@ public final class AIPlayerTest {
     
     @Before
     public void before() {
-        DefaultNodeResultsService nodeResultsService = new DefaultNodeResultsService();
+        NodeResultsFactory<DefaultNodeResults> nodeResultsFactory = new DefaultNodeResultsFactory();
+        DefaultNodeResultsService<DefaultNodeResults> nodeResultsService = new DefaultNodeResultsService<>(nodeResultsFactory);
         PlayoutPolicy policy = new FirstMoveTestPlayoutPolicy();
         gameState = new SimpleTestGameState();
         AIService<DefaultGameMove> aiService = 

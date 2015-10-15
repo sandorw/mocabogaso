@@ -4,6 +4,8 @@ import java.util.Deque;
 import java.util.Set;
 
 import com.github.sandorw.mocabogaso.ai.mcts.MonteCarloSearchTree.SearchTreeIterator;
+import com.github.sandorw.mocabogaso.ai.mcts.NodeResults;
+import com.github.sandorw.mocabogaso.ai.mcts.NodeResultsFactory;
 import com.github.sandorw.mocabogaso.ai.mcts.NodeResultsService;
 import com.github.sandorw.mocabogaso.games.GameMove;
 import com.github.sandorw.mocabogaso.games.GameResult;
@@ -16,21 +18,25 @@ import com.google.common.collect.Sets;
  *
  * @author sandorw
  */
-public final class DefaultNodeResultsService implements NodeResultsService<DefaultNodeResults> {
-
-    @Override
-    public <GM extends GameMove, GS extends GameState<GM, ? extends GameResult>>
-            DefaultNodeResults getNewNodeResults(GS gameState) {
-        return new DefaultNodeResults(gameState);
+public final class DefaultNodeResultsService<NR extends NodeResults> implements NodeResultsService<NR> {
+    private NodeResultsFactory<NR> nodeResultsFactory;
+    
+    public DefaultNodeResultsService(NodeResultsFactory<NR> nodeResultsFactory) {
+        this.nodeResultsFactory = nodeResultsFactory;
     }
     
     @Override
-    public <GM extends GameMove> void propagateGameResult(GameResult gameResult, SearchTreeIterator<GM,DefaultNodeResults> treeIterator) {
-        Set<DefaultNodeResults> nodeResultsSet = Sets.newIdentityHashSet();
-        Deque<SearchTreeIterator<GM,DefaultNodeResults>> iteratorDeque = Queues.newArrayDeque();
+    public <GM extends GameMove, GS extends GameState<GM, ? extends GameResult>> NR getNewNodeResults(GS gameState) {
+        return nodeResultsFactory.getNewNodeResults(gameState);
+    }
+    
+    @Override
+    public <GM extends GameMove> void propagateGameResult(GameResult gameResult, SearchTreeIterator<GM,NR> treeIterator) {
+        Set<NR> nodeResultsSet = Sets.newIdentityHashSet();
+        Deque<SearchTreeIterator<GM,NR>> iteratorDeque = Queues.newArrayDeque();
         iteratorDeque.push(treeIterator);
         while (!iteratorDeque.isEmpty()) {
-            SearchTreeIterator<GM,DefaultNodeResults> iterator = iteratorDeque.pop();
+            SearchTreeIterator<GM,NR> iterator = iteratorDeque.pop();
             if (nodeResultsSet.add(iterator.getCurrentNodeResults())) {
                 while (iterator.hasNextParent()) {
                     iterator.advanceParentNode();
@@ -38,7 +44,7 @@ public final class DefaultNodeResultsService implements NodeResultsService<Defau
                 }
             }
         }
-        for (DefaultNodeResults nodeResults : nodeResultsSet) {
+        for (NR nodeResults : nodeResultsSet) {
             nodeResults.applyGameResult(gameResult);
         }
     }

@@ -2,6 +2,9 @@ package com.github.sandorw.mocabogaso.ai.mcts.amaf;
 
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.github.sandorw.mocabogaso.ai.AIService;
 import com.github.sandorw.mocabogaso.ai.mcts.MonteCarloSearchTree;
 import com.github.sandorw.mocabogaso.ai.mcts.PlayoutPolicy;
@@ -17,13 +20,15 @@ import com.google.common.collect.Sets;
  *
  * @author sandorw
  */
-public final class AMAFMonteCarloSearchService<GM extends GameMove> implements AIService<GM> {
-    private final MonteCarloSearchTree<GM,AMAFNodeResults> searchTree;
+public final class AMAFMonteCarloSearchService<GM extends GameMove, NR extends AMAFNodeResults> implements AIService<GM> {
+    private static Logger LOGGER = LoggerFactory.getLogger(AMAFMonteCarloSearchService.class);
+    
+    private final MonteCarloSearchTree<GM,NR> searchTree;
     private final PlayoutPolicy playoutPolicy;
-    private final AMAFNodeResultsService nodeResultsService;
+    private final AMAFNodeResultsService<NR> nodeResultsService;
     
     public <GS extends GameState<GM, ? extends GameResult>> 
-            AMAFMonteCarloSearchService(AMAFNodeResultsService nodeResultsService, PlayoutPolicy policy, GS initialGameState) {
+            AMAFMonteCarloSearchService(AMAFNodeResultsService<NR> nodeResultsService, PlayoutPolicy policy, GS initialGameState) {
         this.nodeResultsService = nodeResultsService;
         playoutPolicy = policy;
         searchTree = new MonteCarloSearchTree<>(nodeResultsService, initialGameState);
@@ -32,15 +37,18 @@ public final class AMAFMonteCarloSearchService<GM extends GameMove> implements A
     @Override
     public <GS extends GameState<GM, ? extends GameResult>>
             void searchMoves(GS currentGameState, int allottedTimeMs) {
+        int numSimulations = 0;
         long timeout = System.currentTimeMillis() + (long)allottedTimeMs;
         searchTree.iterator().expandNode(currentGameState);
         while (System.currentTimeMillis() < timeout) {
             performPlayoutSimulation(currentGameState.getCopy());
+            ++numSimulations;
         }
+        LOGGER.info("Performed {} simulations in {} ms", numSimulations, allottedTimeMs);
     }
     
     private <GS extends GameState<GM, ? extends GameResult>> void performPlayoutSimulation(GS playoutGameState) {
-        SearchTreeIterator<GM,AMAFNodeResults> iterator = searchTree.iterator();
+        SearchTreeIterator<GM,NR> iterator = searchTree.iterator();
         while (iterator.hasNext()) {
             String currentPlayerName = playoutGameState.getNextPlayerName();
             GM move = iterator.advanceToNextExplorationNode(currentPlayerName);
