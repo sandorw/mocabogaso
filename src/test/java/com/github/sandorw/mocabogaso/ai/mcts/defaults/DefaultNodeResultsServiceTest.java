@@ -7,6 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.github.sandorw.mocabogaso.ai.mcts.MonteCarloSearchTree;
+import com.github.sandorw.mocabogaso.ai.mcts.NodeResultsFactory;
 import com.github.sandorw.mocabogaso.ai.mcts.MonteCarloSearchTree.SearchTreeIterator;
 import com.github.sandorw.mocabogaso.games.GameState;
 import com.github.sandorw.mocabogaso.games.defaults.DefaultGameMove;
@@ -20,11 +21,12 @@ import com.google.common.collect.ImmutableList;
  * @author sandorw
  */
 public final class DefaultNodeResultsServiceTest {
-    private DefaultNodeResultsService nodeResultsService;
+    private DefaultNodeResultsService<DefaultNodeResults> nodeResultsService;
     
     @Before
     public void before() {
-        nodeResultsService = new DefaultNodeResultsService();
+        NodeResultsFactory<DefaultNodeResults> nodeResultsFactory = new DefaultNodeResultsFactory();
+        nodeResultsService = new DefaultNodeResultsService<>(nodeResultsFactory);
     }
     
     @Test

@@ -7,6 +7,7 @@ import org.junit.Test;
 
 import com.github.sandorw.mocabogaso.ai.mcts.MonteCarloSearchTree.SearchTreeIterator;
 import com.github.sandorw.mocabogaso.ai.mcts.defaults.DefaultNodeResults;
+import com.github.sandorw.mocabogaso.ai.mcts.defaults.DefaultNodeResultsFactory;
 import com.github.sandorw.mocabogaso.ai.mcts.defaults.DefaultNodeResultsService;
 import com.github.sandorw.mocabogaso.games.defaults.DefaultGameMove;
 import com.github.sandorw.mocabogaso.games.defaults.DefaultGameResult;
@@ -23,7 +24,8 @@ public final class MonteCarloSearchTreeTest {
 
     @Before
     public void before() {
-        DefaultNodeResultsService nodeResultsService = new DefaultNodeResultsService();
+        NodeResultsFactory<DefaultNodeResults> nodeResultsFactory = new DefaultNodeResultsFactory();
+        DefaultNodeResultsService<DefaultNodeResults> nodeResultsService = new DefaultNodeResultsService<>(nodeResultsFactory);
         gameState = new SimpleTestGameState();
         searchTree = new MonteCarloSearchTree<>(nodeResultsService, gameState);
     }

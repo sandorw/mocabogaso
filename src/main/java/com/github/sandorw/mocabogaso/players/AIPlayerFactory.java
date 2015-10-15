@@ -2,9 +2,14 @@ package com.github.sandorw.mocabogaso.players;
 
 import com.github.sandorw.mocabogaso.ai.AIService;
 import com.github.sandorw.mocabogaso.ai.mcts.MonteCarloSearchService;
+import com.github.sandorw.mocabogaso.ai.mcts.NodeResultsFactory;
 import com.github.sandorw.mocabogaso.ai.mcts.PlayoutPolicy;
 import com.github.sandorw.mocabogaso.ai.mcts.amaf.AMAFMonteCarloSearchService;
 import com.github.sandorw.mocabogaso.ai.mcts.amaf.AMAFNodeResultsService;
+import com.github.sandorw.mocabogaso.ai.mcts.amaf.DefaultAMAFNodeResults;
+import com.github.sandorw.mocabogaso.ai.mcts.amaf.DefaultAMAFNodeResultsFactory;
+import com.github.sandorw.mocabogaso.ai.mcts.defaults.DefaultNodeResults;
+import com.github.sandorw.mocabogaso.ai.mcts.defaults.DefaultNodeResultsFactory;
 import com.github.sandorw.mocabogaso.ai.mcts.defaults.DefaultNodeResultsService;
 import com.github.sandorw.mocabogaso.ai.mcts.policies.RandomMovePlayoutPolicy;
 import com.github.sandorw.mocabogaso.games.GameMove;
@@ -20,7 +25,8 @@ public final class AIPlayerFactory {
 
     public static <GM extends GameMove, GS extends GameState<GM, ? extends GameResult>> 
             Player<GM> getNewAIPlayer(GS initialGameState, int timePerMoveMs) {
-        DefaultNodeResultsService nodeResultsService = new DefaultNodeResultsService();
+        NodeResultsFactory<DefaultNodeResults> nodeResultsFactory = new DefaultNodeResultsFactory();
+        DefaultNodeResultsService<DefaultNodeResults> nodeResultsService = new DefaultNodeResultsService<>(nodeResultsFactory);
         PlayoutPolicy policy = new RandomMovePlayoutPolicy();
         AIService<GM> aiService = new MonteCarloSearchService<>(nodeResultsService, policy, initialGameState);
         return new AIPlayer<>(aiService, timePerMoveMs);
@@ -28,7 +34,8 @@ public final class AIPlayerFactory {
     
     public static <GM extends GameMove, GS extends GameState<GM, ? extends GameResult>> 
             Player<GM> getNewAMAFAIPlayer(GS initialGameState, int timePerMoveMs) {
-        AMAFNodeResultsService nodeResultsService = new AMAFNodeResultsService();
+        NodeResultsFactory<DefaultAMAFNodeResults> nodeResultsFactory = new DefaultAMAFNodeResultsFactory();
+        AMAFNodeResultsService<DefaultAMAFNodeResults> nodeResultsService = new AMAFNodeResultsService<>(nodeResultsFactory);
         PlayoutPolicy policy = new RandomMovePlayoutPolicy();
         AIService<GM> aiService = new AMAFMonteCarloSearchService<>(nodeResultsService, policy, initialGameState);
         return new AIPlayer<>(aiService, timePerMoveMs);
@@ -36,7 +43,8 @@ public final class AIPlayerFactory {
     
     public static <GM extends GameMove, GS extends GameState<GM, ? extends GameResult>> 
             Player<GM> getNewMultiThreadedAMAFAIPlayer(GS initialGameState, int timePerMoveMs, int numThreads) {
-        AMAFNodeResultsService nodeResultsService = new AMAFNodeResultsService();
+        NodeResultsFactory<DefaultAMAFNodeResults> nodeResultsFactory = new DefaultAMAFNodeResultsFactory();
+        AMAFNodeResultsService<DefaultAMAFNodeResults> nodeResultsService = new AMAFNodeResultsService<>(nodeResultsFactory);
         PlayoutPolicy policy = new RandomMovePlayoutPolicy();
         AIService<GM> aiService = new AMAFMonteCarloSearchService<>(nodeResultsService, policy, initialGameState);
         return new MultiThreadedAIPlayer<>(aiService, timePerMoveMs, numThreads);

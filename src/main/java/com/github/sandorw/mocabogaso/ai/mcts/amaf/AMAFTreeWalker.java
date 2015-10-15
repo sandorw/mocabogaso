@@ -12,12 +12,12 @@ import com.google.common.collect.Sets;
  * 
  * @author sandorw
  */
-public class AMAFTreeWalker<GM extends GameMove> {
-    private final Set<AMAFNodeResults> nodeResultsSet;
-    private final Set<AMAFNodeResults> amafNodeResultsSet;
-    private final SearchTreeIterator<GM,AMAFNodeResults> treeIterator;
+public final class AMAFTreeWalker<GM extends GameMove, NR extends AMAFNodeResults> {
+    private final Set<NR> nodeResultsSet;
+    private final Set<NR> amafNodeResultsSet;
+    private final SearchTreeIterator<GM,NR> treeIterator;
 
-    public AMAFTreeWalker(SearchTreeIterator<GM,AMAFNodeResults> iterator) {
+    public AMAFTreeWalker(SearchTreeIterator<GM,NR> iterator) {
         nodeResultsSet = Sets.newIdentityHashSet();
         amafNodeResultsSet = Sets.newIdentityHashSet();
         treeIterator = iterator;
@@ -25,21 +25,21 @@ public class AMAFTreeWalker<GM extends GameMove> {
     
     public void applyGameResultWithPlayoutMoves(GameResult gameResult, Set<GM> playedMoves) {
         walkTreeAndCollectNodeResults(treeIterator, playedMoves);
-        for (AMAFNodeResults nodeResults : nodeResultsSet) {
+        for (NR nodeResults : nodeResultsSet) {
             nodeResults.applyGameResult(gameResult);
         }
-        for (AMAFNodeResults nodeResults : amafNodeResultsSet) {
+        for (NR nodeResults : amafNodeResultsSet) {
             nodeResults.applyAMAFGameResult(gameResult);
         }
     }
     
-    private void walkTreeAndCollectNodeResults(SearchTreeIterator<GM,AMAFNodeResults> iterator, Set<GM> playedMoves) {
+    private void walkTreeAndCollectNodeResults(SearchTreeIterator<GM,NR> iterator, Set<GM> playedMoves) {
         nodeResultsSet.add(iterator.getCurrentNodeResults());
         while (iterator.hasNextChild()) {
             iterator.advanceChildNode();
             GM childMove = iterator.getCurrentChildMove();
             if (playedMoves.contains(childMove)) {
-                AMAFNodeResults nodeResults = iterator.getCurrentChildIterator().getCurrentNodeResults();
+                NR nodeResults = iterator.getCurrentChildIterator().getCurrentNodeResults();
                 if (!nodeResultsSet.contains(nodeResults)) {
                     amafNodeResultsSet.add(nodeResults);
                 }

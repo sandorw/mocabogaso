@@ -2,7 +2,6 @@ package com.github.sandorw.mocabogaso.ai.mcts.amaf;
 
 import java.util.List;
 
-import com.github.sandorw.mocabogaso.ai.mcts.NodeResults;
 import com.github.sandorw.mocabogaso.games.GameMove;
 import com.github.sandorw.mocabogaso.games.GameResult;
 import com.github.sandorw.mocabogaso.games.GameState;
@@ -15,7 +14,7 @@ import com.github.sandorw.mocabogaso.games.GameState;
  * 
  * @author sandorw
  */
-public class UnsafeTwoPlayerAMAFNodeResults implements NodeResults {
+public final class UnsafeTwoPlayerAMAFNodeResults implements AMAFNodeResults {
     private final String player1Name;
     private float player1Score;
     private float player2Score;
@@ -69,6 +68,7 @@ public class UnsafeTwoPlayerAMAFNodeResults implements NodeResults {
         }
     }
     
+    @Override
     public <GM extends GameMove, GR extends GameResult> void applyAMAFGameResult(GR gameResult) {
         ++numRAVESims;
         if (gameResult.isTie()) {
