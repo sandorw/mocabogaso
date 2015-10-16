@@ -3,6 +3,9 @@ package com.github.sandorw.mocabogaso;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.github.sandorw.mocabogaso.games.GameMove;
 import com.github.sandorw.mocabogaso.games.GameResult;
 import com.github.sandorw.mocabogaso.games.GameState;
@@ -16,6 +19,8 @@ import com.google.common.collect.Maps;
  * @author sandorw
  */
 public final class Game<GM extends GameMove, GS extends GameState<GM, ? extends GameResult>> {
+    private static Logger LOGGER = LoggerFactory.getLogger(Game.class);
+    
     private final Map<String,Player<GM>> players;
     private GS globalGameState;
     private final List<GM> moveHistory;
@@ -38,6 +43,7 @@ public final class Game<GM extends GameMove, GS extends GameState<GM, ? extends 
             System.out.println(globalGameState.toString());
         }
         System.out.println(getGameResult().toString());
+        LOGGER.info("Game finished. {}", getGameResult().toString());
         shutdown();
     }
     
@@ -61,7 +67,10 @@ public final class Game<GM extends GameMove, GS extends GameState<GM, ? extends 
     
     private GM getNextMove() {
         String nextPlayer = globalGameState.getNextPlayerName();
-        return players.get(nextPlayer).chooseNextMove(globalGameState.getCopy());
+        LOGGER.info("Requesting next move from {}", nextPlayer);
+        GM nextMove = players.get(nextPlayer).chooseNextMove(globalGameState.getCopy());
+        LOGGER.info("{} selected move {}", nextPlayer, nextMove);
+        return nextMove;
     }
     
     private void applyMove(GM move) {
