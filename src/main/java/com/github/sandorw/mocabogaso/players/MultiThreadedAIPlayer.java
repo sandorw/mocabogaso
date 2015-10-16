@@ -1,5 +1,7 @@
 package com.github.sandorw.mocabogaso.players;
 
+import java.util.List;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -7,6 +9,7 @@ import com.github.sandorw.mocabogaso.ai.AIService;
 import com.github.sandorw.mocabogaso.games.GameMove;
 import com.github.sandorw.mocabogaso.games.GameResult;
 import com.github.sandorw.mocabogaso.games.GameState;
+import com.google.common.collect.Lists;
 
 /**
  * Multithreaded AI Player implementation.
@@ -28,14 +31,19 @@ public class MultiThreadedAIPlayer<GM extends GameMove> implements Player<GM> {
     
     @Override
     public <GS extends GameState<GM, ? extends GameResult>> GM chooseNextMove(GS currentGameState) {
+        List<Callable<Void>> taskList = Lists.newArrayList();
         for (int i=0; i < numThreads; ++i) {
-            executor.submit(() -> {
-                aiService.searchMoves(currentGameState, allottedTimeMs);
+            taskList.add(new Callable<Void>() {
+                public Void call() {
+                    aiService.searchMoves(currentGameState, allottedTimeMs);
+                    return null;
+                }
             });
         }
         try {
-            Thread.sleep(allottedTimeMs);
+            executor.invokeAll(taskList);
         } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
             return aiService.selectMove();
         }
         return aiService.selectMove();
