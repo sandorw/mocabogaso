@@ -8,6 +8,7 @@ import org.junit.Test;
 
 import com.github.sandorw.mocabogaso.ai.mcts.MonteCarloSearchTree;
 import com.github.sandorw.mocabogaso.ai.mcts.MonteCarloSearchTree.SearchTreeIterator;
+import com.github.sandorw.mocabogaso.ai.mcts.NodeResults;
 import com.github.sandorw.mocabogaso.ai.mcts.NodeResultsFactory;
 import com.github.sandorw.mocabogaso.games.defaults.DefaultGameMove;
 import com.github.sandorw.mocabogaso.games.defaults.DefaultGameResult;
@@ -27,7 +28,22 @@ public class AMAFNodeResultsServiceTest {
         AMAFNodeResultsService<DefaultAMAFNodeResults> nodeResultsService = new AMAFNodeResultsService<>(nodeResultsFactory);
         SimpleTestGameState gameState = new SimpleTestGameState();
         MonteCarloSearchTree<DefaultGameMove,DefaultAMAFNodeResults> searchTree = new MonteCarloSearchTree<>(nodeResultsService, gameState);
-        SearchTreeIterator<DefaultGameMove,DefaultAMAFNodeResults> iterator = searchTree.iterator();
+        propagateAMAFGameResult(nodeResultsService, gameState, searchTree);
+    }
+    
+    @Test
+    public void propagateUnsafeAMAFGameResultTest() {
+        NodeResultsFactory<UnsafeTwoPlayerAMAFNodeResults> nodeResultsFactory = new UnsafeTwoPlayerAMAFNodeResultsFactory();
+        AMAFNodeResultsService<UnsafeTwoPlayerAMAFNodeResults> nodeResultsService = new AMAFNodeResultsService<>(nodeResultsFactory);
+        SimpleTestGameState gameState = new SimpleTestGameState();
+        MonteCarloSearchTree<DefaultGameMove,UnsafeTwoPlayerAMAFNodeResults> searchTree =
+                new MonteCarloSearchTree<>(nodeResultsService, gameState);
+        propagateAMAFGameResult(nodeResultsService, gameState, searchTree);
+    }
+    
+    private <NR extends AMAFNodeResults> void propagateAMAFGameResult(AMAFNodeResultsService<NR> nodeResultsService, 
+            SimpleTestGameState gameState, MonteCarloSearchTree<DefaultGameMove,NR> searchTree) {
+        SearchTreeIterator<DefaultGameMove,NR> iterator = searchTree.iterator();
         iterator.expandNode(gameState);
         DefaultGameMove move = new DefaultGameMove("Player 1", 1);
         while (iterator.hasNextChild()) {
@@ -49,7 +65,7 @@ public class AMAFNodeResultsServiceTest {
             }
         }
         iterator = iterator.getCurrentChildIterator();
-        DefaultAMAFNodeResults nodeResults = iterator.getCurrentNodeResults();
+        NR nodeResults = iterator.getCurrentNodeResults();
         assertTrue(nodeResults.getValue("Player 1") > 0.0f);
         assertEquals(nodeResults.getNumSimulations(), 0);
         move = new DefaultGameMove("Player 1", 2);

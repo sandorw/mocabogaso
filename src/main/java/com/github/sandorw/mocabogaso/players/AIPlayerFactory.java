@@ -8,6 +8,8 @@ import com.github.sandorw.mocabogaso.ai.mcts.amaf.AMAFMonteCarloSearchService;
 import com.github.sandorw.mocabogaso.ai.mcts.amaf.AMAFNodeResultsService;
 import com.github.sandorw.mocabogaso.ai.mcts.amaf.DefaultAMAFNodeResults;
 import com.github.sandorw.mocabogaso.ai.mcts.amaf.DefaultAMAFNodeResultsFactory;
+import com.github.sandorw.mocabogaso.ai.mcts.amaf.UnsafeTwoPlayerAMAFNodeResults;
+import com.github.sandorw.mocabogaso.ai.mcts.amaf.UnsafeTwoPlayerAMAFNodeResultsFactory;
 import com.github.sandorw.mocabogaso.ai.mcts.defaults.DefaultNodeResults;
 import com.github.sandorw.mocabogaso.ai.mcts.defaults.DefaultNodeResultsFactory;
 import com.github.sandorw.mocabogaso.ai.mcts.defaults.DefaultNodeResultsService;
@@ -45,6 +47,15 @@ public final class AIPlayerFactory {
             Player<GM> getNewMultiThreadedAMAFAIPlayer(GS initialGameState, int timePerMoveMs, int numThreads) {
         NodeResultsFactory<DefaultAMAFNodeResults> nodeResultsFactory = new DefaultAMAFNodeResultsFactory();
         AMAFNodeResultsService<DefaultAMAFNodeResults> nodeResultsService = new AMAFNodeResultsService<>(nodeResultsFactory);
+        PlayoutPolicy policy = new RandomMovePlayoutPolicy();
+        AIService<GM> aiService = new AMAFMonteCarloSearchService<>(nodeResultsService, policy, initialGameState);
+        return new MultiThreadedAIPlayer<>(aiService, timePerMoveMs, numThreads);
+    }
+    
+    public static <GM extends GameMove, GS extends GameState<GM, ? extends GameResult>>
+            Player<GM> getNewUnsafeMultiThreadedAMAFAIPlayer(GS initialGameState, int timePerMoveMs, int numThreads) {
+        NodeResultsFactory<UnsafeTwoPlayerAMAFNodeResults> nodeResultsFactory = new UnsafeTwoPlayerAMAFNodeResultsFactory();
+        AMAFNodeResultsService<UnsafeTwoPlayerAMAFNodeResults> nodeResultsService = new AMAFNodeResultsService<>(nodeResultsFactory);
         PlayoutPolicy policy = new RandomMovePlayoutPolicy();
         AIService<GM> aiService = new AMAFMonteCarloSearchService<>(nodeResultsService, policy, initialGameState);
         return new MultiThreadedAIPlayer<>(aiService, timePerMoveMs, numThreads);
