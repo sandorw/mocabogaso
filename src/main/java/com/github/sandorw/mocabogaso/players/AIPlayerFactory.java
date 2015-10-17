@@ -36,6 +36,15 @@ public final class AIPlayerFactory {
     
     public static <GM extends GameMove, GS extends GameState<GM, ? extends GameResult>> 
             Player<GM> getNewAMAFAIPlayer(GS initialGameState, int timePerMoveMs) {
+        NodeResultsFactory<UnsafeTwoPlayerAMAFNodeResults> nodeResultsFactory = new UnsafeTwoPlayerAMAFNodeResultsFactory();
+        AMAFNodeResultsService<UnsafeTwoPlayerAMAFNodeResults> nodeResultsService = new AMAFNodeResultsService<>(nodeResultsFactory);
+        PlayoutPolicy policy = new RandomMovePlayoutPolicy();
+        AIService<GM> aiService = new AMAFMonteCarloSearchService<>(nodeResultsService, policy, initialGameState);
+        return new AIPlayer<>(aiService, timePerMoveMs);
+    }
+    
+    public static <GM extends GameMove, GS extends GameState<GM, ? extends GameResult>> 
+        Player<GM> getNewUnsafeAMAFAIPlayer(GS initialGameState, int timePerMoveMs) {
         NodeResultsFactory<DefaultAMAFNodeResults> nodeResultsFactory = new DefaultAMAFNodeResultsFactory();
         AMAFNodeResultsService<DefaultAMAFNodeResults> nodeResultsService = new AMAFNodeResultsService<>(nodeResultsFactory);
         PlayoutPolicy policy = new RandomMovePlayoutPolicy();
@@ -59,5 +68,17 @@ public final class AIPlayerFactory {
         PlayoutPolicy policy = new RandomMovePlayoutPolicy();
         AIService<GM> aiService = new AMAFMonteCarloSearchService<>(nodeResultsService, policy, initialGameState);
         return new MultiThreadedAIPlayer<>(aiService, timePerMoveMs, numThreads);
+    }
+    
+    public static <GM extends GameMove, GS extends GameState<GM, ? extends GameResult>>
+            Player<GM> getNewAIPlayer(GS initialGameState, PlayerDifficulty difficulty) {
+        switch (difficulty) {
+        case EASY:
+            return getNewAIPlayer(initialGameState, 3000);
+        case HARD:
+            return getNewUnsafeMultiThreadedAMAFAIPlayer(initialGameState, 5000, 2);
+        default:
+            return getNewUnsafeAMAFAIPlayer(initialGameState, 4000);
+        }
     }
 }

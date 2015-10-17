@@ -9,6 +9,9 @@ mainClassName = "com.github.sandorw.mocabogaso.Mocabogaso"
 
 run{
 	standardInput = System.in
+	if(project.hasProperty('args')){
+		args project.args
+	}
 }
 
 buildscript {
