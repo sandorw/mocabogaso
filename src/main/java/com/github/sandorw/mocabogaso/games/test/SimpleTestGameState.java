@@ -61,6 +61,11 @@ public final class SimpleTestGameState implements GameState<DefaultGameMove, Def
             return move;
         return null;
     }
+    
+    @Override
+    public String getHumanReadableMoveString(DefaultGameMove move) {
+        return String.valueOf(move.getLocation());
+    }
 
     @Override
     public boolean isValidMove(DefaultGameMove move) {

@@ -5,8 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import com.github.sandorw.mocabogaso.games.defaults.DefaultGameMove;
 import com.github.sandorw.mocabogaso.games.hex.HexGameState;
-import com.github.sandorw.mocabogaso.players.AIPlayerFactory;
-import com.github.sandorw.mocabogaso.players.HumanPlayer;
+import com.github.sandorw.mocabogaso.players.PlayerFactory;
 import com.github.sandorw.mocabogaso.players.PlayerDifficulty;
 
 public class Mocabogaso {
@@ -20,8 +19,8 @@ public class Mocabogaso {
         
         HexGameState gameState = HexGameState.of(9);
         Game<DefaultGameMove, HexGameState> game = new Game<>(gameState);
-        game.addPlayer("X", AIPlayerFactory.getNewAIPlayer(gameState, difficulty));
-        game.addPlayer("O", new HumanPlayer<>());
+        game.addPlayer("X", PlayerFactory.getNewAIPlayer(gameState, difficulty));
+        game.addPlayer("O", PlayerFactory.getNewAIAssistedHumanPlayer(gameState));
         game.playGame();
     }
 }

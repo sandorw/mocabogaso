@@ -18,6 +18,8 @@ public interface GameState<GM extends GameMove, GR extends GameResult> {
     List<GM> getAllValidMoves();
 
     GM getMoveFromString(String input);
+    
+    String getHumanReadableMoveString(GM move);
 
     boolean isValidMove(GM move);
 

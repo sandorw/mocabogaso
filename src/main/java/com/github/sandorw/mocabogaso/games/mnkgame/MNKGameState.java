@@ -110,6 +110,11 @@ public class MNKGameState implements GameState<DefaultGameMove, DefaultGameResul
         int location = Integer.parseInt(input);
         return new DefaultGameMove(nextPlayerName, location);
     }
+    
+    @Override
+    public String getHumanReadableMoveString(DefaultGameMove move) {
+        return String.valueOf(move.getLocation());
+    }
 
     @Override
     public boolean isValidMove(DefaultGameMove move) {

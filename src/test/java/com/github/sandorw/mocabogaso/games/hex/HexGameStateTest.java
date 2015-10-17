@@ -11,7 +11,7 @@ import org.junit.rules.ExpectedException;
 import com.github.sandorw.mocabogaso.Game;
 import com.github.sandorw.mocabogaso.games.GameResult;
 import com.github.sandorw.mocabogaso.games.defaults.DefaultGameMove;
-import com.github.sandorw.mocabogaso.players.AIPlayerFactory;
+import com.github.sandorw.mocabogaso.players.PlayerFactory;
 
 /**
  * Test cases for HexGameState
@@ -150,8 +150,8 @@ public class HexGameStateTest {
     public void playFullGameTest() {
         HexGameState gameState = HexGameState.of(3);
         Game<DefaultGameMove, HexGameState> game = new Game<>(gameState);
-        game.addPlayer("X", AIPlayerFactory.getNewAIPlayer(gameState, 200));
-        game.addPlayer("O", AIPlayerFactory.getNewAIPlayer(gameState, 200));
+        game.addPlayer("X", PlayerFactory.getNewAIPlayer(gameState, 200));
+        game.addPlayer("O", PlayerFactory.getNewAIPlayer(gameState, 200));
         game.playGame();
         assertTrue(game.isGameOver());
         GameResult gameResult = game.getGameResult();

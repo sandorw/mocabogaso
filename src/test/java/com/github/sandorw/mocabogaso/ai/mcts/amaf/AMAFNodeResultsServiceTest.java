@@ -8,7 +8,6 @@ import org.junit.Test;
 
 import com.github.sandorw.mocabogaso.ai.mcts.MonteCarloSearchTree;
 import com.github.sandorw.mocabogaso.ai.mcts.MonteCarloSearchTree.SearchTreeIterator;
-import com.github.sandorw.mocabogaso.ai.mcts.NodeResults;
 import com.github.sandorw.mocabogaso.ai.mcts.NodeResultsFactory;
 import com.github.sandorw.mocabogaso.games.defaults.DefaultGameMove;
 import com.github.sandorw.mocabogaso.games.defaults.DefaultGameResult;

@@ -128,6 +128,14 @@ public final class HexGameState implements GameState<DefaultGameMove, DefaultGam
             return new DefaultGameMove(nextPlayerName, -1);
         }
     }
+    
+    @Override
+    public String getHumanReadableMoveString(DefaultGameMove move) {
+        int i = getRowNumber(move.getLocation());
+        int j = getColNumber(move.getLocation());
+        char colChar = (char)('A' + j);
+        return String.valueOf(colChar) + (i+1);
+    }
 
     @Override
     public boolean isValidMove(DefaultGameMove move) {
