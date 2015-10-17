@@ -22,14 +22,16 @@ Future plans include Go and Chess, along with an AIService better suited for che
 
 You can play a game against the AI via
 
-	./gradlew run
+    ./gradlew run
 
 This command executes the main function in Mocabogaso.java, shown below:
 
     HexGameState gameState = HexGameState.of(9);
     Game<DefaultGameMove, HexGameState> game = new Game<>(gameState);
-    game.addPlayer("X", AIPlayerFactory.getNewMultiThreadedAMAFAIPlayer(gameState, 3000, 2));
-    game.addPlayer("O", new HumanPlayer<>());
+    game.addPlayer("X", PlayerFactory.getNewAIPlayer(gameState, difficulty));
+    game.addPlayer("O", PlayerFactory.getNewAIAssistedHumanPlayer(gameState));
     game.playGame();
 
-By default, you'll play a 9x9 game of Hex in which the AI goes first, taking 3 seconds per move. You can input your moves by entering them in the console, formatted as e.g. A9.
+By default, you'll play a 9x9 game of Hex in which the AI goes first, taking 4 seconds per move. You can input your moves by entering them in the console, formatted as e.g. A9. If you want help in choosing a move, type hint during your turn. To change the difficulty of the AI, pass in a difficulty argument - one of easy, medium, or hard:
+
+    ./gradlew run -Pargs=hard
