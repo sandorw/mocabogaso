@@ -43,7 +43,7 @@ public final class AIAssistedHumanPlayer<GM extends GameMove> implements Player<
         while (true) {
             String input = scanner.next();
             if (input.equals("hint")) {
-                System.out.println("Suggested move: " + aiService.selectMove());
+                System.out.println("Suggested move: " + currentGameState.getHumanReadableMoveString(aiService.selectMove()));
                 System.out.println("Please input a valid move. Input hint for a suggestion from the AI.");
             } else {
                 newMove = currentGameState.getMoveFromString(input);

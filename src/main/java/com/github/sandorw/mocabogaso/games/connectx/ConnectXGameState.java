@@ -61,5 +61,10 @@ public class ConnectXGameState extends MNKGameState {
             }
         return new DefaultGameMove(nextPlayerName, rowNumber*numCols + colNumber);
     }
+    
+    @Override
+    public String getHumanReadableMoveString(DefaultGameMove move) {
+        return String.valueOf(getColNumber(move.getLocation()));
+    }
 
 }
