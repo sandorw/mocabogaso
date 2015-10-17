@@ -10,7 +10,7 @@ import com.github.sandorw.mocabogaso.Game;
 import com.github.sandorw.mocabogaso.games.GameResult;
 import com.github.sandorw.mocabogaso.games.defaults.DefaultGameMove;
 import com.github.sandorw.mocabogaso.games.mnkgame.MNKGameState;
-import com.github.sandorw.mocabogaso.players.AIPlayerFactory;
+import com.github.sandorw.mocabogaso.players.PlayerFactory;
 
 public class ConnectXGameStateTest {
 
@@ -63,8 +63,8 @@ public class ConnectXGameStateTest {
     public void playFullGameTest() {
         ConnectXGameState gameState = ConnectXGameState.of(3,3,3);
         Game<DefaultGameMove, MNKGameState> game = new Game<>(gameState);
-        game.addPlayer("X", AIPlayerFactory.getNewAIPlayer(gameState, 50));
-        game.addPlayer("O", AIPlayerFactory.getNewAIPlayer(gameState, 50));
+        game.addPlayer("X", PlayerFactory.getNewAIPlayer(gameState, 50));
+        game.addPlayer("O", PlayerFactory.getNewAIPlayer(gameState, 50));
         game.playGame();
         assertTrue(game.isGameOver());
         GameResult gameResult = game.getGameResult();

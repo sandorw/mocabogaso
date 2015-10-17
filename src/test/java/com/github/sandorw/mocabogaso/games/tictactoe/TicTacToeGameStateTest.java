@@ -8,7 +8,7 @@ import com.github.sandorw.mocabogaso.Game;
 import com.github.sandorw.mocabogaso.games.GameResult;
 import com.github.sandorw.mocabogaso.games.defaults.DefaultGameMove;
 import com.github.sandorw.mocabogaso.games.mnkgame.MNKGameState;
-import com.github.sandorw.mocabogaso.players.AIPlayerFactory;
+import com.github.sandorw.mocabogaso.players.PlayerFactory;
 
 /**
  * Test cases for TicTacToeGameState
@@ -21,8 +21,8 @@ public class TicTacToeGameStateTest {
     public void playFullGameTest() {
         TicTacToeGameState gameState = TicTacToeGameState.of();
         Game<DefaultGameMove, MNKGameState> game = new Game<>(gameState);
-        game.addPlayer("X", AIPlayerFactory.getNewAIPlayer(gameState, 150));
-        game.addPlayer("O", AIPlayerFactory.getNewAIPlayer(gameState, 150));
+        game.addPlayer("X", PlayerFactory.getNewAIPlayer(gameState, 150));
+        game.addPlayer("O", PlayerFactory.getNewAIPlayer(gameState, 150));
         game.playGame();
         assertTrue(game.isGameOver());
         GameResult gameResult = game.getGameResult();

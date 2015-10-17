@@ -26,8 +26,8 @@ public final class AIPlayerFactoryTest {
     
     @Test
     public void defaultAIPlayerTest() {
-        game.addPlayer("Player 1", AIPlayerFactory.getNewAIPlayer(gameState, 50));
-        game.addPlayer("Player 2", AIPlayerFactory.getNewAIPlayer(gameState, 50));
+        game.addPlayer("Player 1", PlayerFactory.getNewAIPlayer(gameState, 50));
+        game.addPlayer("Player 2", PlayerFactory.getNewAIPlayer(gameState, 50));
         game.playGame();
         assertTrue(game.isGameOver());
         assertFalse(game.getGameResult().isTie());
@@ -35,8 +35,8 @@ public final class AIPlayerFactoryTest {
     
     @Test
     public void amafAIPlayerTest() {
-        game.addPlayer("Player 1", AIPlayerFactory.getNewAMAFAIPlayer(gameState, 50));
-        game.addPlayer("Player 2", AIPlayerFactory.getNewAMAFAIPlayer(gameState, 50));
+        game.addPlayer("Player 1", PlayerFactory.getNewAMAFAIPlayer(gameState, 50));
+        game.addPlayer("Player 2", PlayerFactory.getNewAMAFAIPlayer(gameState, 50));
         game.playGame();
         assertTrue(game.isGameOver());
         assertFalse(game.getGameResult().isTie());
@@ -44,8 +44,8 @@ public final class AIPlayerFactoryTest {
     
     @Test
     public void multiThreadedAMAFAIPlayerTest() {
-        game.addPlayer("Player 1", AIPlayerFactory.getNewMultiThreadedAMAFAIPlayer(gameState, 50, 2));
-        game.addPlayer("Player 2", AIPlayerFactory.getNewMultiThreadedAMAFAIPlayer(gameState, 50, 2));
+        game.addPlayer("Player 1", PlayerFactory.getNewMultiThreadedAMAFAIPlayer(gameState, 50, 2));
+        game.addPlayer("Player 2", PlayerFactory.getNewMultiThreadedAMAFAIPlayer(gameState, 50, 2));
         game.playGame();
         assertTrue(game.isGameOver());
         assertFalse(game.getGameResult().isTie());
@@ -53,8 +53,8 @@ public final class AIPlayerFactoryTest {
     
     @Test
     public void multiThreadedUnsafeAMAAIPlayerTest() {
-        game.addPlayer("Player 1", AIPlayerFactory.getNewUnsafeMultiThreadedAMAFAIPlayer(gameState, 50, 2));
-        game.addPlayer("Player 2", AIPlayerFactory.getNewUnsafeMultiThreadedAMAFAIPlayer(gameState, 50, 2));
+        game.addPlayer("Player 1", PlayerFactory.getNewUnsafeMultiThreadedAMAFAIPlayer(gameState, 50, 2));
+        game.addPlayer("Player 2", PlayerFactory.getNewUnsafeMultiThreadedAMAFAIPlayer(gameState, 50, 2));
         game.playGame();
         assertTrue(game.isGameOver());
         assertFalse(game.getGameResult().isTie());
