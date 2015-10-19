@@ -10,11 +10,11 @@ import com.github.sandorw.mocabogaso.games.defaults.DefaultGameMove;
 import com.github.sandorw.mocabogaso.games.test.SimpleTestGameState;
 
 /**
- * Test cases for AIPlayerFactory
+ * Test cases for PlayerFactory
  * 
  * @author sandorw
  */
-public final class AIPlayerFactoryTest {
+public final class PlayerFactoryTest {
     SimpleTestGameState gameState;
     Game<DefaultGameMove, SimpleTestGameState> game;
     

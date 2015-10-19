@@ -18,7 +18,7 @@ import com.github.sandorw.mocabogaso.games.test.SimpleTestGameState;
  * @author sandorw
  */
 public final class HumanPlayerTest {
-    private HumanPlayer<DefaultGameMove> player;
+    private Player<DefaultGameMove> player;
     private SimpleTestGameState gameState;
     
     @Before
@@ -30,7 +30,7 @@ public final class HumanPlayerTest {
     public void chooseNextMoveValidMoveTest() {
         InputStream inputStream = new ByteArrayInputStream("1".getBytes(Charset.forName("UTF-8")));
         System.setIn(inputStream);
-        player = new HumanPlayer<>();
+        player = PlayerFactory.getNewHumanPlayer();
         DefaultGameMove move = player.chooseNextMove(gameState);
         assertEquals(move.getLocation(), 1);
         System.setIn(System.in);
@@ -40,7 +40,7 @@ public final class HumanPlayerTest {
     public void chooseNextMoveInvalidMoveTest() {
         InputStream inputStream = new ByteArrayInputStream("4 4 1".getBytes(Charset.forName("UTF-8")));
         System.setIn(inputStream);
-        player = new HumanPlayer<>();
+        player = PlayerFactory.getNewHumanPlayer();
         DefaultGameMove move = player.chooseNextMove(gameState);
         assertEquals(move.getLocation(), 1);
         System.setIn(System.in);
