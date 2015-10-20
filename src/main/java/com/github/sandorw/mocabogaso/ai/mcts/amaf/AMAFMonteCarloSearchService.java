@@ -45,6 +45,7 @@ public final class AMAFMonteCarloSearchService<GM extends GameMove, NR extends A
             ++numSimulations;
         }
         LOGGER.info("Performed {} simulations in {} ms", numSimulations, allottedTimeMs);
+        logMoveChoices(currentGameState);
     }
     
     private <GS extends GameState<GM, ? extends GameResult>> void performPlayoutSimulation(GS playoutGameState) {
@@ -73,5 +74,20 @@ public final class AMAFMonteCarloSearchService<GM extends GameMove, NR extends A
     @Override
     public void applyMove(GM move, GameState<GM, ? extends GameResult> resultingGameState) {
         searchTree.advanceTree(move, resultingGameState);
+    }
+    
+    public void logMoveChoices(GameState<GM, ? extends GameResult> rootGameState) {
+        String evaluatingPlayerName = rootGameState.getNextPlayerName();
+        LOGGER.debug("Top level moves considered by the AIService from {}'s perspective:", evaluatingPlayerName);
+        SearchTreeIterator<GM,NR> iterator = searchTree.iterator();
+        while (iterator.hasNextChild()) {
+            iterator.advanceChildNode();
+            String moveString = rootGameState.getHumanReadableMoveString(iterator.getCurrentChildMove());
+            NR nodeResults = iterator.getCurrentChildIterator().getCurrentNodeResults();
+            LOGGER.debug("Move {} was visited in {} simulations and has score {}", 
+                    moveString, 
+                    nodeResults.getNumSimulations(),
+                    nodeResults.getValue(evaluatingPlayerName));
+        }
     }
 }
