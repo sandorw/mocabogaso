@@ -34,7 +34,7 @@ public class ConnectXGameStateTest {
         gameState.applyMove(new DefaultGameMove("O",1));
         gameState.applyMove(new DefaultGameMove("X",2));
         ConnectXGameState copy = (ConnectXGameState) gameState.getCopy();
-        assertTrue(gameState.equalsState(copy));
+        assertTrue(gameState.equals(copy));
     }
     
     @Test

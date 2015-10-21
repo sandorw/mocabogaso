@@ -36,7 +36,7 @@ public class HexGameStateTest {
         HexGameState copy = (HexGameState) gameState.getCopy();
         gameState.applyMove(new DefaultGameMove("O", 3));
         copy.applyMove(new DefaultGameMove("O", 3));
-        assertTrue(gameState.equalsState(copy));
+        assertTrue(gameState.equals(copy));
     }
     
     @Test

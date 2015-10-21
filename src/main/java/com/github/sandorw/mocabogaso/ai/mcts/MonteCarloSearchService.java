@@ -18,18 +18,26 @@ import com.github.sandorw.mocabogaso.games.GameState;
  */
 public final class MonteCarloSearchService<GM extends GameMove, NR extends NodeResults> implements AIService<GM> {
     private static Logger LOGGER = LoggerFactory.getLogger(MonteCarloSearchService.class);
-    
+
 	private final MonteCarloSearchTree<GM,NR> searchTree;
 	private final PlayoutPolicy playoutPolicy;
 	private final NodeResultsService<NR> nodeResultsService;
-	
-	public <GS extends GameState<GM, ? extends GameResult>> 
+
+	public <GS extends GameState<GM, ? extends GameResult>>
 	        MonteCarloSearchService(NodeResultsService<NR> nodeResultsService, PlayoutPolicy policy, GS initialGameState) {
 	    this.nodeResultsService = nodeResultsService;
 	    playoutPolicy = policy;
 	    searchTree = new MonteCarloSearchTree<>(nodeResultsService, initialGameState);
 	}
-	
+
+    public void setNodeExpandThreshold(int threshold) {
+        searchTree.setNodeExpandThreshold(threshold);
+    }
+
+    public void setExplorationConstant(float explorationConstant) {
+        searchTree.setExplorationConstant(explorationConstant);
+    }
+
 	@Override
 	public <GS extends GameState<GM, ? extends GameResult>>
 	        void searchMoves(GS currentGameState, int allottedTimeMs) {
@@ -43,7 +51,7 @@ public final class MonteCarloSearchService<GM extends GameMove, NR extends NodeR
 	    LOGGER.info("Performed {} simulations in {} ms", numSimulations, allottedTimeMs);
 	    logMoveChoices(currentGameState);
 	}
-	
+
 	private <GS extends GameState<GM, ? extends GameResult>> void performPlayoutSimulation(GS playoutGameState) {
 	    SearchTreeIterator<GM,NR> iterator = searchTree.iterator();
 	    while (iterator.hasNext()) {
