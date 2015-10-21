@@ -22,7 +22,7 @@ import com.google.common.collect.Sets;
  */
 public final class AMAFMonteCarloSearchService<GM extends GameMove, NR extends AMAFNodeResults> implements AIService<GM> {
     private static Logger LOGGER = LoggerFactory.getLogger(AMAFMonteCarloSearchService.class);
-    
+
     private final MonteCarloSearchTree<GM,NR> searchTree;
     private final PlayoutPolicy playoutPolicy;
     private final AMAFNodeResultsService<NR> nodeResultsService;
@@ -33,7 +33,15 @@ public final class AMAFMonteCarloSearchService<GM extends GameMove, NR extends A
         playoutPolicy = policy;
         searchTree = new MonteCarloSearchTree<>(nodeResultsService, initialGameState);
     }
-    
+
+    public void setNodeExpandThreshold(int threshold) {
+        searchTree.setNodeExpandThreshold(threshold);
+    }
+
+    public void setExplorationConstant(float explorationConstant) {
+        searchTree.setExplorationConstant(explorationConstant);
+    }
+
     @Override
     public <GS extends GameState<GM, ? extends GameResult>>
             void searchMoves(GS currentGameState, int allottedTimeMs) {
@@ -47,7 +55,7 @@ public final class AMAFMonteCarloSearchService<GM extends GameMove, NR extends A
         LOGGER.info("Performed {} simulations in {} ms", numSimulations, allottedTimeMs);
         logMoveChoices(currentGameState);
     }
-    
+
     private <GS extends GameState<GM, ? extends GameResult>> void performPlayoutSimulation(GS playoutGameState) {
         SearchTreeIterator<GM,NR> iterator = searchTree.iterator();
         while (iterator.hasNext()) {
@@ -75,7 +83,7 @@ public final class AMAFMonteCarloSearchService<GM extends GameMove, NR extends A
     public void applyMove(GM move, GameState<GM, ? extends GameResult> resultingGameState) {
         searchTree.advanceTree(move, resultingGameState);
     }
-    
+
     public void logMoveChoices(GameState<GM, ? extends GameResult> rootGameState) {
         String evaluatingPlayerName = rootGameState.getNextPlayerName();
         LOGGER.debug("Top level moves considered by the AIService from {}'s perspective:", evaluatingPlayerName);
