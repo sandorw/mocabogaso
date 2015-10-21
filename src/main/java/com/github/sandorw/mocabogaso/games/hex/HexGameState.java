@@ -245,8 +245,9 @@ public final class HexGameState implements GameState<DefaultGameMove, DefaultGam
         return stringBuilder.toString();
     }
     
-    public boolean equalsState(Object obj) {
-        if (this.getClass() != obj.getClass())
+    @Override
+    public boolean equals(Object obj) {
+        if ((obj == null) || (this.getClass() != obj.getClass()))
             return false;
         if (obj == this)
             return true;
@@ -260,6 +261,12 @@ public final class HexGameState implements GameState<DefaultGameMove, DefaultGam
                 if (boardLocation[i][j] != rhs.boardLocation[i][j])
                     return false;
         return true;
+    }
+    
+    @Override
+    public int hashCode() {
+        //Convert long hash into an int by xoring the high and low bits
+        return (int) ((zobristHash >>> 32) ^ ((zobristHash & 0xFFFF0000) >>> 32));
     }
 
     private final class Group {

@@ -54,7 +54,7 @@ public final class MNKGameStateTest {
         gameState.applyMove(new DefaultGameMove("O",11));
         gameState.applyMove(new DefaultGameMove("X",5));
         MNKGameState copy = (MNKGameState) gameState.getCopy();
-        assertTrue(gameState.equalsState(copy));
+        assertTrue(gameState.equals(copy));
     }
     
     @Test
