@@ -91,7 +91,7 @@ public final class MNKGameStateTest {
     @Test
     public void parseUserInputMoveTest() {
         MNKGameState gameState = MNKGameState.of(2, 2, 2);
-        DefaultGameMove move = gameState.getMoveFromString("2");
+        DefaultGameMove move = gameState.getMoveFromString("A2");
         assertEquals(move.getPlayerName(), "X");
         assertEquals(move.getLocation(), 2);
     }
