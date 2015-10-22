@@ -107,13 +107,21 @@ public class MNKGameState implements GameState<DefaultGameMove, DefaultGameResul
 
     @Override
     public DefaultGameMove getMoveFromString(String input) {
-        int location = Integer.parseInt(input);
-        return new DefaultGameMove(nextPlayerName, location);
+        try {
+            int columnIndex = (int)input.charAt(0) - 65;
+            int rowIndex = Integer.parseInt(input.substring(1))-1;
+            return new DefaultGameMove(nextPlayerName, rowIndex*numCols + columnIndex);
+        } catch (IndexOutOfBoundsException | NumberFormatException e) {
+            return new DefaultGameMove(nextPlayerName, -1);
+        }
     }
     
     @Override
     public String getHumanReadableMoveString(DefaultGameMove move) {
-        return String.valueOf(move.getLocation());
+        int i = getRowNumber(move.getLocation());
+        int j = getColNumber(move.getLocation());
+        char colChar = (char)('A' + j);
+        return String.valueOf(colChar) + (i+1);
     }
 
     @Override
@@ -218,11 +226,14 @@ public class MNKGameState implements GameState<DefaultGameMove, DefaultGameResul
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("MNKGameState, m=" + numRows + ", n=" + numCols + ", k=" + goalNumInARow + "\n");
         for (int i=numRows-1; i >= 0; --i) {
+            stringBuilder.append((char)('A' + i));
+            stringBuilder.append(" ");
             for (int j=0; j < numCols; ++j)
                 stringBuilder.append(boardLocation[i][j].toString());
             stringBuilder.append("\n");
         }
-        for (int i=0; i < numCols; ++i)
+        stringBuilder.append("  ");
+        for (int i=1; i <= numCols; ++i)
             stringBuilder.append(i);
         stringBuilder.append("\n");
         stringBuilder.append("Next player: ").append(nextPlayerName);
