@@ -36,9 +36,11 @@ public class TicTacToeGameStateTest {
         MonteCarloSearchService<DefaultGameMove, DefaultNodeResults> aiService 
                 = new MonteCarloSearchService<>(nodeResultsService, policy, gameState);
         aiService.setNodeExpandThreshold(1);
+        aiService.setExplorationConstant(5.0f);
         Player<DefaultGameMove> XPlayer = new AIPlayer<>(aiService, 100);
         aiService = new MonteCarloSearchService<>(nodeResultsService, policy, gameState);
         aiService.setNodeExpandThreshold(1);
+        aiService.setExplorationConstant(5.0f);
         Player<DefaultGameMove> OPlayer = new AIPlayer<>(aiService, 100);
         game.addPlayer("X", XPlayer);
         game.addPlayer("O", OPlayer);
