@@ -13,7 +13,7 @@ import com.github.sandorw.mocabogaso.games.defaults.DefaultGameMove;
 import com.github.sandorw.mocabogaso.games.test.SimpleTestGameState;
 
 /**
- * Test cases for HumanPlayer
+ * Test cases for HumanPlayer and AIAssistedHumanPlayer
  * 
  * @author sandorw
  */
@@ -41,6 +41,26 @@ public final class HumanPlayerTest {
         InputStream inputStream = new ByteArrayInputStream("4 4 1".getBytes(Charset.forName("UTF-8")));
         System.setIn(inputStream);
         player = PlayerFactory.getNewHumanPlayer();
+        DefaultGameMove move = player.chooseNextMove(gameState);
+        assertEquals(move.getLocation(), 1);
+        System.setIn(System.in);
+    }
+    
+    @Test
+    public void aiAssisted_chooseNextMoveValidMoveTest() {
+        InputStream inputStream = new ByteArrayInputStream("1".getBytes(Charset.forName("UTF-8")));
+        System.setIn(inputStream);
+        player = PlayerFactory.getNewAIAssistedHumanPlayer(gameState);
+        DefaultGameMove move = player.chooseNextMove(gameState);
+        assertEquals(move.getLocation(), 1);
+        System.setIn(System.in);
+    }
+
+    @Test
+    public void aiAssisted_chooseNextMoveInvalidMoveTest() {
+        InputStream inputStream = new ByteArrayInputStream("4 4 1".getBytes(Charset.forName("UTF-8")));
+        System.setIn(inputStream);
+        player = PlayerFactory.getNewAIAssistedHumanPlayer(gameState);
         DefaultGameMove move = player.chooseNextMove(gameState);
         assertEquals(move.getLocation(), 1);
         System.setIn(System.in);
