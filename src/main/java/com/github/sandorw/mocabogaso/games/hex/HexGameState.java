@@ -219,7 +219,7 @@ public final class HexGameState implements GameState<DefaultGameMove, DefaultGam
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("HexGameState, board size=" + boardSize + "\n");
-        stringBuilder.append("   ");
+        stringBuilder.append("  ");
         for (int i=0; i < boardSize; ++i) {
             stringBuilder.append((char)(i+65) + " ");
         }
