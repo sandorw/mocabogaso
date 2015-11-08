@@ -8,8 +8,6 @@ import com.github.sandorw.mocabogaso.ai.mcts.amaf.AMAFMonteCarloSearchService;
 import com.github.sandorw.mocabogaso.ai.mcts.amaf.AMAFNodeResultsService;
 import com.github.sandorw.mocabogaso.ai.mcts.amaf.DefaultAMAFNodeResults;
 import com.github.sandorw.mocabogaso.ai.mcts.amaf.DefaultAMAFNodeResultsFactory;
-import com.github.sandorw.mocabogaso.ai.mcts.amaf.UnsafeTwoPlayerAMAFNodeResults;
-import com.github.sandorw.mocabogaso.ai.mcts.amaf.UnsafeTwoPlayerAMAFNodeResultsFactory;
 import com.github.sandorw.mocabogaso.ai.mcts.defaults.DefaultNodeResults;
 import com.github.sandorw.mocabogaso.ai.mcts.defaults.DefaultNodeResultsFactory;
 import com.github.sandorw.mocabogaso.ai.mcts.defaults.DefaultNodeResultsService;
@@ -35,15 +33,6 @@ public final class PlayerFactory {
     }
     
     public static <GM extends GameMove, GS extends GameState<GM, ? extends GameResult>> 
-            Player<GM> getNewUnsafeAMAFAIPlayer(GS initialGameState, int timePerMoveMs) {
-        NodeResultsFactory<UnsafeTwoPlayerAMAFNodeResults> nodeResultsFactory = new UnsafeTwoPlayerAMAFNodeResultsFactory();
-        AMAFNodeResultsService<UnsafeTwoPlayerAMAFNodeResults> nodeResultsService = new AMAFNodeResultsService<>(nodeResultsFactory);
-        PlayoutPolicy policy = new RandomMovePlayoutPolicy();
-        AIService<GM> aiService = new AMAFMonteCarloSearchService<>(nodeResultsService, policy, initialGameState);
-        return new AIPlayer<>(aiService, timePerMoveMs);
-    }
-    
-    public static <GM extends GameMove, GS extends GameState<GM, ? extends GameResult>> 
         Player<GM> getNewAMAFAIPlayer(GS initialGameState, int timePerMoveMs) {
         NodeResultsFactory<DefaultAMAFNodeResults> nodeResultsFactory = new DefaultAMAFNodeResultsFactory();
         AMAFNodeResultsService<DefaultAMAFNodeResults> nodeResultsService = new AMAFNodeResultsService<>(nodeResultsFactory);
@@ -62,23 +51,14 @@ public final class PlayerFactory {
     }
     
     public static <GM extends GameMove, GS extends GameState<GM, ? extends GameResult>>
-            Player<GM> getNewUnsafeMultiThreadedAMAFAIPlayer(GS initialGameState, int timePerMoveMs, int numThreads) {
-        NodeResultsFactory<UnsafeTwoPlayerAMAFNodeResults> nodeResultsFactory = new UnsafeTwoPlayerAMAFNodeResultsFactory();
-        AMAFNodeResultsService<UnsafeTwoPlayerAMAFNodeResults> nodeResultsService = new AMAFNodeResultsService<>(nodeResultsFactory);
-        PlayoutPolicy policy = new RandomMovePlayoutPolicy();
-        AIService<GM> aiService = new AMAFMonteCarloSearchService<>(nodeResultsService, policy, initialGameState);
-        return new MultiThreadedAIPlayer<>(aiService, timePerMoveMs, numThreads);
-    }
-    
-    public static <GM extends GameMove, GS extends GameState<GM, ? extends GameResult>>
             Player<GM> getNewAIPlayer(GS initialGameState, PlayerDifficulty difficulty) {
         switch (difficulty) {
         case EASY:
             return getNewAIPlayer(initialGameState, 3000);
         case HARD:
-            return getNewUnsafeMultiThreadedAMAFAIPlayer(initialGameState, 5000, 2);
+            return getNewMultiThreadedAMAFAIPlayer(initialGameState, 5000, 2);
         default:
-            return getNewUnsafeAMAFAIPlayer(initialGameState, 4000);
+            return getNewAMAFAIPlayer(initialGameState, 4000);
         }
     }
     
@@ -88,8 +68,8 @@ public final class PlayerFactory {
     
     public static <GM extends GameMove, GS extends GameState<GM, ? extends GameResult>>
             Player<GM> getNewAIAssistedHumanPlayer(GS initialGameState) {
-        NodeResultsFactory<UnsafeTwoPlayerAMAFNodeResults> nodeResultsFactory = new UnsafeTwoPlayerAMAFNodeResultsFactory();
-        AMAFNodeResultsService<UnsafeTwoPlayerAMAFNodeResults> nodeResultsService = new AMAFNodeResultsService<>(nodeResultsFactory);
+        NodeResultsFactory<DefaultAMAFNodeResults> nodeResultsFactory = new DefaultAMAFNodeResultsFactory();
+        AMAFNodeResultsService<DefaultAMAFNodeResults> nodeResultsService = new AMAFNodeResultsService<>(nodeResultsFactory);
         PlayoutPolicy policy = new RandomMovePlayoutPolicy();
         AIService<GM> aiService = new AMAFMonteCarloSearchService<>(nodeResultsService, policy, initialGameState);
         return new AIAssistedHumanPlayer<>(aiService);

@@ -50,13 +50,4 @@ public final class PlayerFactoryTest {
         assertTrue(game.isGameOver());
         assertFalse(game.getGameResult().isTie());
     }
-    
-    @Test
-    public void multiThreadedUnsafeAMAAIPlayerTest() {
-        game.addPlayer("Player 1", PlayerFactory.getNewUnsafeMultiThreadedAMAFAIPlayer(gameState, 50, 2));
-        game.addPlayer("Player 2", PlayerFactory.getNewUnsafeMultiThreadedAMAFAIPlayer(gameState, 50, 2));
-        game.playGame();
-        assertTrue(game.isGameOver());
-        assertFalse(game.getGameResult().isTie());
-    }
 }
