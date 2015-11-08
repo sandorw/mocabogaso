@@ -22,7 +22,7 @@ import com.github.sandorw.mocabogaso.players.AIPlayer;
 public class AMAFMonteCarloSearchServiceTest {
 
     @Test
-    public void ticTacToeAMAFTest() {
+    public void hexAMAFTest() {
         HexGameState gameState = HexGameState.of(5);
         Game<DefaultGameMove, HexGameState> game = new Game<>(gameState);
         NodeResultsFactory<DefaultAMAFNodeResults> nodeResultsFactory = new DefaultAMAFNodeResultsFactory();
