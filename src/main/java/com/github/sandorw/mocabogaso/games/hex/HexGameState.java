@@ -15,15 +15,15 @@ import com.google.common.collect.Lists;
  * @author sandorw
  */
 public final class HexGameState implements GameState<DefaultGameMove, DefaultGameResult> {
-    private BoardStatus[][] boardLocation;
-    private Group[][] groups;
-    private final int boardSize;
-    private String nextPlayerName;
-    private String winningPlayerName;
-    private long zobristHash;
-    private final MNKZobristHashService zobristHashService;
+    protected BoardStatus[][] boardLocation;
+    protected Group[][] groups;
+    protected final int boardSize;
+    protected String nextPlayerName;
+    protected String winningPlayerName;
+    protected long zobristHash;
+    protected final MNKZobristHashService zobristHashService;
     
-    private enum BoardStatus {
+    protected enum BoardStatus {
         X(0),
         O(1),
         EMPTY(2);

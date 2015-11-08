@@ -14,7 +14,7 @@ public final class UnsafeTwoPlayerAMAFNodeResultsFactory implements NodeResultsF
 
     @Override
     public <GM extends GameMove, GS extends GameState<GM, ? extends GameResult>> 
-            UnsafeTwoPlayerAMAFNodeResults getNewNodeResults(GS gameState) {
+            UnsafeTwoPlayerAMAFNodeResults getNewNodeResults(GM move, GS gameState) {
         return new UnsafeTwoPlayerAMAFNodeResults(gameState);
     }
 }

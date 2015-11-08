@@ -81,7 +81,7 @@ public final class MonteCarloSearchTree<GM extends GameMove, NR extends NodeResu
             parentNodes = Lists.newArrayList();
         	expanded = false;
         	childNodes = Lists.newArrayList();
-        	nodeResults = nodeResultsService.getNewNodeResults(resultingGameState);
+        	nodeResults = nodeResultsService.getNewNodeResults(null, resultingGameState);
         }
         
         private void addParentNode(GM moveMade, SearchTreeNode parent) {

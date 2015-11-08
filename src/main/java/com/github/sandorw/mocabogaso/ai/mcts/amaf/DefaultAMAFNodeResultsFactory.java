@@ -14,7 +14,7 @@ public final class DefaultAMAFNodeResultsFactory implements NodeResultsFactory<D
     
     @Override
     public <GM extends GameMove, GS extends GameState<GM, ? extends GameResult>> 
-            DefaultAMAFNodeResults getNewNodeResults(GS gameState) {
+            DefaultAMAFNodeResults getNewNodeResults(GM move, GS gameState) {
         return new DefaultAMAFNodeResults(gameState);
     }
 }

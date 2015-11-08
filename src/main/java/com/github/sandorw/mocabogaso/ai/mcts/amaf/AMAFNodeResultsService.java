@@ -22,8 +22,8 @@ public final class AMAFNodeResultsService<NR extends AMAFNodeResults> implements
     }
     
     @Override
-    public <GM extends GameMove, GS extends GameState<GM, ? extends GameResult>> NR getNewNodeResults(GS gameState) {
-        return nodeResultsFactory.getNewNodeResults(gameState);
+    public <GM extends GameMove, GS extends GameState<GM, ? extends GameResult>> NR getNewNodeResults(GM move, GS gameState) {
+        return nodeResultsFactory.getNewNodeResults(move, gameState);
     }
 
     public <GM extends GameMove> void propagateGameResultWithAMAF(GameResult gameResult, 
