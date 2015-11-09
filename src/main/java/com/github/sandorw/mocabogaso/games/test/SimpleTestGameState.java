@@ -2,6 +2,7 @@ package com.github.sandorw.mocabogaso.games.test;
 
 import java.util.List;
 
+import com.github.sandorw.mocabogaso.ai.mcts.Heuristic;
 import com.github.sandorw.mocabogaso.games.GameState;
 import com.github.sandorw.mocabogaso.games.defaults.DefaultGameMove;
 import com.github.sandorw.mocabogaso.games.defaults.DefaultGameResult;
@@ -113,6 +114,11 @@ public final class SimpleTestGameState implements GameState<DefaultGameMove, Def
     
     public String toString() {
         return "Current sum: " + moveSum + ", next player: " + getOppositePlayerName(lastPlayer);
+    }
+
+    @Override
+    public List<Heuristic<DefaultGameMove, DefaultGameResult>> getHeuristics() {
+        return Lists.newArrayList();
     }
 
 }

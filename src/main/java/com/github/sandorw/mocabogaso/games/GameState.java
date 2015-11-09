@@ -2,6 +2,8 @@ package com.github.sandorw.mocabogaso.games;
 
 import java.util.List;
 
+import com.github.sandorw.mocabogaso.ai.mcts.Heuristic;
+
 /**
  * This represents all state relevant to a given game.
  *
@@ -30,5 +32,7 @@ public interface GameState<GM extends GameMove, GR extends GameResult> {
     GR getGameResult();
 
     long getZobristHash();
+    
+    List<Heuristic<GM, GR>> getHeuristics();
     
 }

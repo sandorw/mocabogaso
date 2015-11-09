@@ -3,10 +3,13 @@ package com.github.sandorw.mocabogaso.games.mnkgame;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.github.sandorw.mocabogaso.ai.mcts.Heuristic;
 import com.github.sandorw.mocabogaso.games.GameState;
 import com.github.sandorw.mocabogaso.games.defaults.DefaultGameMove;
 import com.github.sandorw.mocabogaso.games.defaults.DefaultGameResult;
+import com.github.sandorw.mocabogaso.games.hex.InitialStateHeuristic;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 
 /**
  * Representation of the GameState for the m,n,k game - on an m x n board, players take turns
@@ -14,7 +17,7 @@ import com.google.common.collect.ImmutableList;
  * 
  * @author sandorw
  */
-public class MNKGameState implements GameState<DefaultGameMove, DefaultGameResult> {
+public class MNKGameState implements GameState<DefaultGameMove, DefaultGameResult> {   
     protected BoardStatus[][] boardLocation;
     protected final int numRows;
     protected final int numCols;
@@ -23,6 +26,7 @@ public class MNKGameState implements GameState<DefaultGameMove, DefaultGameResul
     protected String winningPlayerName;
     protected long zobristHash;
     protected final MNKZobristHashService zobristHashService;
+    protected final List<Heuristic<DefaultGameMove, DefaultGameResult>> heuristicList;
     
     protected enum BoardStatus {
         X(0),
@@ -50,10 +54,13 @@ public class MNKGameState implements GameState<DefaultGameMove, DefaultGameResul
     }
     
     public static MNKGameState of(int m, int n, int k) {
-        return new MNKGameState(m, n, k, new MNKZobristHashService(m, n));
+        List<Heuristic<DefaultGameMove, DefaultGameResult>> heuristics = Lists.newArrayList();
+        heuristics.add(new InitialStateHeuristic(5));
+        return new MNKGameState(m, n, k, new MNKZobristHashService(m, n), heuristics);
     }
     
-    protected MNKGameState(int m, int n, int k, MNKZobristHashService hashService) {
+    protected MNKGameState(int m, int n, int k, MNKZobristHashService hashService,
+            List<Heuristic<DefaultGameMove, DefaultGameResult>> heuristicList) {
         numRows = m;
         numCols = n;
         if ((m < 1) || (n < 1))
@@ -71,11 +78,12 @@ public class MNKGameState implements GameState<DefaultGameMove, DefaultGameResul
         winningPlayerName = "";
         zobristHashService = hashService;
         zobristHash = 0L;
+        this.heuristicList = heuristicList;
     }
     
     @Override
     public GameState<DefaultGameMove, DefaultGameResult> getCopy() {
-        MNKGameState copy = new MNKGameState(numRows, numCols, goalNumInARow, zobristHashService);
+        MNKGameState copy = new MNKGameState(numRows, numCols, goalNumInARow, zobristHashService, heuristicList);
         for (int i=0; i < numRows; ++i)
             for (int j=0; j < numCols; ++j)
                 copy.boardLocation[i][j] = boardLocation[i][j];
@@ -263,6 +271,11 @@ public class MNKGameState implements GameState<DefaultGameMove, DefaultGameResul
     public int hashCode() {
         //Convert long hash into an int by xoring the high and low bits
         return (int) ((zobristHash >>> 32) ^ ((zobristHash & 0xFFFF0000) >>> 32));
+    }
+
+    @Override
+    public List<Heuristic<DefaultGameMove, DefaultGameResult>> getHeuristics() {
+        return heuristicList;
     }
     
 }
