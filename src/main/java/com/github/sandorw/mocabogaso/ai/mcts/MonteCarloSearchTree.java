@@ -29,7 +29,7 @@ public final class MonteCarloSearchTree<GM extends GameMove, NR extends NodeResu
 	        MonteCarloSearchTree(NodeResultsService<NR> nrService, GS initialGameState) {
 		rootNode = null;
 		nodeResultsService = nrService;
-		rootNode = new SearchTreeNode(initialGameState);
+		rootNode = new SearchTreeNode(null, initialGameState);
 		transpositionTable = new MapMaker()
 		        .weakValues()
 		        .makeMap();
@@ -43,7 +43,7 @@ public final class MonteCarloSearchTree<GM extends GameMove, NR extends NodeResu
 	    SearchTreeNode newRoot = rootNode.findNodeWithMove(move);
 	    if (newRoot == null) {
 	        long zobristHash = resultingGameState.getZobristHash();
-            newRoot = new SearchTreeNode(resultingGameState);
+            newRoot = new SearchTreeNode(move, resultingGameState);
             transpositionTable.put(zobristHash, newRoot);
 	    } else {
 	        newRoot.removeParentNodes();
@@ -77,11 +77,11 @@ public final class MonteCarloSearchTree<GM extends GameMove, NR extends NodeResu
 		private final NR nodeResults;
 		
         private <GS extends GameState<GM, ? extends GameResult>>
-        		SearchTreeNode(GS resultingGameState) {
+        		SearchTreeNode(GM move, GS resultingGameState) {
             parentNodes = Lists.newArrayList();
         	expanded = false;
         	childNodes = Lists.newArrayList();
-        	nodeResults = nodeResultsService.getNewNodeResults(null, resultingGameState);
+        	nodeResults = nodeResultsService.getNewNodeResults(move, resultingGameState);
         }
         
         private void addParentNode(GM moveMade, SearchTreeNode parent) {
@@ -118,7 +118,7 @@ public final class MonteCarloSearchTree<GM extends GameMove, NR extends NodeResu
                         childNode = transpositionTable.get(zobristHash);
                     }
                     if (childNode == null) {
-                        childNode = new SearchTreeNode(resultingGameState);
+                        childNode = new SearchTreeNode(move, resultingGameState);
                         transpositionTable.put(zobristHash, childNode);
                     }
                     childNode.addParentNode(move, this);
