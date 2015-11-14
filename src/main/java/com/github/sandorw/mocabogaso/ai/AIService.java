@@ -12,10 +12,10 @@ import com.github.sandorw.mocabogaso.games.GameState;
  */
 public interface AIService<GM extends GameMove> {
 	
-	<GS extends GameState<GM, ? extends GameResult>> void searchMoves(GS currentGameState, int allottedTimeMs);
+	<GR extends GameResult, GS extends GameState<GM,GR>> void searchMoves(GS currentGameState, int allottedTimeMs);
 	
 	GM selectMove();
 	
-	void applyMove(GM move, GameState<GM, ? extends GameResult> resultingGameState);
+	<GR extends GameResult, GS extends GameState<GM,GR>> void applyMove(GM move, GS resultingGameState);
 	
 }
