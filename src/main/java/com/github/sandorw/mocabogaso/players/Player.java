@@ -11,9 +11,9 @@ import com.github.sandorw.mocabogaso.games.GameState;
  */
 public interface Player<GM extends GameMove> {
 
-	<GS extends GameState<GM, ? extends GameResult>> GM chooseNextMove(GS currentGameState);
+	<GR extends GameResult, GS extends GameState<GM,GR>> GM chooseNextMove(GS currentGameState);
 	
-	<GS extends GameState<GM, ? extends GameResult>> void informOfMoveMade(GM move, GS resultingGameState);
+	<GR extends GameResult, GS extends GameState<GM,GR>> void informOfMoveMade(GM move, GS resultingGameState);
 	
 	void shutdown();
 }

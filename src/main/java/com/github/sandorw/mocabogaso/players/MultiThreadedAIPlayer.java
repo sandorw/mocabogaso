@@ -30,7 +30,7 @@ public class MultiThreadedAIPlayer<GM extends GameMove> implements Player<GM> {
     }
     
     @Override
-    public <GS extends GameState<GM, ? extends GameResult>> GM chooseNextMove(GS currentGameState) {
+    public <GR extends GameResult, GS extends GameState<GM,GR>> GM chooseNextMove(GS currentGameState) {
         List<Callable<Void>> taskList = Lists.newArrayList();
         for (int i=0; i < numThreads; ++i) {
             taskList.add(new Callable<Void>() {
@@ -50,7 +50,7 @@ public class MultiThreadedAIPlayer<GM extends GameMove> implements Player<GM> {
     }
 
     @Override
-    public <GS extends GameState<GM, ? extends GameResult>> 
+    public <GR extends GameResult, GS extends GameState<GM,GR>> 
             void informOfMoveMade(GM move, GS resultingGameState) {
         aiService.applyMove(move, resultingGameState);
     }

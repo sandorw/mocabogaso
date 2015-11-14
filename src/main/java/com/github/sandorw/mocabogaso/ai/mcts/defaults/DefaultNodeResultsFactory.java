@@ -13,7 +13,7 @@ import com.github.sandorw.mocabogaso.games.GameState;
 public final class DefaultNodeResultsFactory implements NodeResultsFactory<DefaultNodeResults> {
 
     @Override
-    public <GM extends GameMove, GS extends GameState<GM, ? extends GameResult>> 
+    public <GM extends GameMove, GR extends GameResult, GS extends GameState<GM,GR>> 
             DefaultNodeResults getNewNodeResults(GM move, GS gameState) {
         return new DefaultNodeResults(gameState);
     }

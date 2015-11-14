@@ -23,7 +23,7 @@ import com.github.sandorw.mocabogaso.games.GameState;
  */
 public final class PlayerFactory {
 
-    public static <GM extends GameMove, GS extends GameState<GM, ? extends GameResult>> 
+    public static <GM extends GameMove, GR extends GameResult, GS extends GameState<GM,GR>> 
             Player<GM> getNewAIPlayer(GS initialGameState, int timePerMoveMs) {
         NodeResultsFactory<DefaultNodeResults> nodeResultsFactory = new DefaultNodeResultsFactory();
         DefaultNodeResultsService<DefaultNodeResults> nodeResultsService = new DefaultNodeResultsService<>(nodeResultsFactory);
@@ -32,7 +32,7 @@ public final class PlayerFactory {
         return new AIPlayer<>(aiService, timePerMoveMs);
     }
     
-    public static <GM extends GameMove, GS extends GameState<GM, ? extends GameResult>> 
+    public static <GM extends GameMove, GR extends GameResult, GS extends GameState<GM,GR>> 
         Player<GM> getNewAMAFAIPlayer(GS initialGameState, int timePerMoveMs) {
         NodeResultsFactory<DefaultAMAFNodeResults> nodeResultsFactory = new DefaultAMAFNodeResultsFactory();
         AMAFNodeResultsService<DefaultAMAFNodeResults> nodeResultsService = new AMAFNodeResultsService<>(nodeResultsFactory);
@@ -41,7 +41,7 @@ public final class PlayerFactory {
         return new AIPlayer<>(aiService, timePerMoveMs);
     }
     
-    public static <GM extends GameMove, GS extends GameState<GM, ? extends GameResult>> 
+    public static <GM extends GameMove, GR extends GameResult, GS extends GameState<GM,GR>> 
             Player<GM> getNewMultiThreadedAMAFAIPlayer(GS initialGameState, int timePerMoveMs, int numThreads) {
         NodeResultsFactory<DefaultAMAFNodeResults> nodeResultsFactory = new DefaultAMAFNodeResultsFactory();
         AMAFNodeResultsService<DefaultAMAFNodeResults> nodeResultsService = new AMAFNodeResultsService<>(nodeResultsFactory);
@@ -50,7 +50,7 @@ public final class PlayerFactory {
         return new MultiThreadedAIPlayer<>(aiService, timePerMoveMs, numThreads);
     }
     
-    public static <GM extends GameMove, GS extends GameState<GM, ? extends GameResult>>
+    public static <GM extends GameMove, GR extends GameResult, GS extends GameState<GM,GR>>
             Player<GM> getNewAIPlayer(GS initialGameState, PlayerDifficulty difficulty) {
         switch (difficulty) {
         case EASY:
@@ -66,7 +66,7 @@ public final class PlayerFactory {
         return new HumanPlayer<>();
     }
     
-    public static <GM extends GameMove, GS extends GameState<GM, ? extends GameResult>>
+    public static <GM extends GameMove, GR extends GameResult, GS extends GameState<GM,GR>>
             Player<GM> getNewAIAssistedHumanPlayer(GS initialGameState) {
         NodeResultsFactory<DefaultAMAFNodeResults> nodeResultsFactory = new DefaultAMAFNodeResultsFactory();
         AMAFNodeResultsService<DefaultAMAFNodeResults> nodeResultsService = new AMAFNodeResultsService<>(nodeResultsFactory);

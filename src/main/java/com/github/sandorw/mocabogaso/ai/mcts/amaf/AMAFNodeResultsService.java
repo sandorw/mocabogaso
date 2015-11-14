@@ -22,7 +22,8 @@ public final class AMAFNodeResultsService<NR extends AMAFNodeResults> implements
     }
     
     @Override
-    public <GM extends GameMove, GS extends GameState<GM, ? extends GameResult>> NR getNewNodeResults(GM move, GS gameState) {
+    public <GM extends GameMove, GR extends GameResult, GS extends GameState<GM,GR>> 
+            NR getNewNodeResults(GM move, GS gameState) {
         return nodeResultsFactory.getNewNodeResults(move, gameState);
     }
 
@@ -33,7 +34,8 @@ public final class AMAFNodeResultsService<NR extends AMAFNodeResults> implements
     }
 
     @Override
-    public <GM extends GameMove> void propagateGameResult(GameResult gameResult, SearchTreeIterator<GM,NR> treeIterator) {
+    public <GM extends GameMove, GR extends GameResult> 
+            void propagateGameResult(GR gameResult, SearchTreeIterator<GM,NR> treeIterator) {
         throw new UnsupportedOperationException();
     }
 }

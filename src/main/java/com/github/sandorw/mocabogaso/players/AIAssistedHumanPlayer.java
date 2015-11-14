@@ -28,8 +28,7 @@ public final class AIAssistedHumanPlayer<GM extends GameMove> implements Player<
     }
 
     @Override
-    public <GS extends GameState<GM, ? extends GameResult>> GM chooseNextMove(
-            GS currentGameState) {
+    public <GR extends GameResult, GS extends GameState<GM,GR>> GM chooseNextMove(GS currentGameState) {
         dither = true;
         executor.submit(new Runnable() {
             public void run() {
@@ -59,7 +58,7 @@ public final class AIAssistedHumanPlayer<GM extends GameMove> implements Player<
     }
 
     @Override
-    public <GS extends GameState<GM, ? extends GameResult>> 
+    public <GR extends GameResult, GS extends GameState<GM,GR>> 
             void informOfMoveMade(GM move, GS resultingGameState) {
         aiService.applyMove(move, resultingGameState);
     }
