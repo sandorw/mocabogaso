@@ -5,6 +5,11 @@ import com.github.sandorw.mocabogaso.games.GameState;
 import com.github.sandorw.mocabogaso.games.defaults.DefaultGameMove;
 import com.github.sandorw.mocabogaso.games.defaults.DefaultGameResult;
 
+/**
+ * Heuristic for 
+ * 
+ * @author sandorw
+ */
 public class InitialStateHeuristic implements Heuristic<DefaultGameMove, DefaultGameResult> {
     private int weight;
     
