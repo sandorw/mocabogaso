@@ -22,27 +22,11 @@ import com.github.sandorw.mocabogaso.players.AIPlayer;
 public class AMAFMonteCarloSearchServiceTest {
 
     @Test
-    public void ticTacToeAMAFTest() {
+    public void hexAMAFTest() {
         HexGameState gameState = HexGameState.of(5);
         Game<DefaultGameMove, HexGameState> game = new Game<>(gameState);
         NodeResultsFactory<DefaultAMAFNodeResults> nodeResultsFactory = new DefaultAMAFNodeResultsFactory();
         AMAFNodeResultsService<DefaultAMAFNodeResults> nodeResultsService = new AMAFNodeResultsService<>(nodeResultsFactory);
-        PlayoutPolicy policy = new RandomMovePlayoutPolicy();
-        AIService<DefaultGameMove> oAIService = new AMAFMonteCarloSearchService<>(nodeResultsService, policy, gameState);
-        AIService<DefaultGameMove> xAIService = new AMAFMonteCarloSearchService<>(nodeResultsService, policy, gameState);
-        game.addPlayer("O", new AIPlayer<>(oAIService, 50));
-        game.addPlayer("X", new AIPlayer<>(xAIService, 50));
-        game.playGame();
-        GameResult gameResult = game.getGameResult();
-        assertFalse(gameResult.isTie());
-    }
-    
-    @Test
-    public void unsafeTicTacToeAMAFTest() {
-        HexGameState gameState = HexGameState.of(5);
-        Game<DefaultGameMove, HexGameState> game = new Game<>(gameState);
-        NodeResultsFactory<UnsafeTwoPlayerAMAFNodeResults> nodeResultsFactory = new UnsafeTwoPlayerAMAFNodeResultsFactory();
-        AMAFNodeResultsService<UnsafeTwoPlayerAMAFNodeResults> nodeResultsService = new AMAFNodeResultsService<>(nodeResultsFactory);
         PlayoutPolicy policy = new RandomMovePlayoutPolicy();
         AIService<DefaultGameMove> oAIService = new AMAFMonteCarloSearchService<>(nodeResultsService, policy, gameState);
         AIService<DefaultGameMove> xAIService = new AMAFMonteCarloSearchService<>(nodeResultsService, policy, gameState);

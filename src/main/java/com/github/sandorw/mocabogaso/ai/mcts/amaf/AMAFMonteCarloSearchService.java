@@ -27,7 +27,7 @@ public final class AMAFMonteCarloSearchService<GM extends GameMove, NR extends A
     private final PlayoutPolicy playoutPolicy;
     private final AMAFNodeResultsService<NR> nodeResultsService;
     
-    public <GS extends GameState<GM, ? extends GameResult>> 
+    public <GR extends GameResult, GS extends GameState<GM,GR>> 
             AMAFMonteCarloSearchService(AMAFNodeResultsService<NR> nodeResultsService, PlayoutPolicy policy, GS initialGameState) {
         this.nodeResultsService = nodeResultsService;
         playoutPolicy = policy;
@@ -43,7 +43,7 @@ public final class AMAFMonteCarloSearchService<GM extends GameMove, NR extends A
     }
 
     @Override
-    public <GS extends GameState<GM, ? extends GameResult>>
+    public <GR extends GameResult, GS extends GameState<GM,GR>>
             void searchMoves(GS currentGameState, int allottedTimeMs) {
         int numSimulations = 0;
         long timeout = System.currentTimeMillis() + (long)allottedTimeMs;
@@ -56,7 +56,7 @@ public final class AMAFMonteCarloSearchService<GM extends GameMove, NR extends A
         logMoveChoices(currentGameState);
     }
 
-    private <GS extends GameState<GM, ? extends GameResult>> void performPlayoutSimulation(GS playoutGameState) {
+    private <GR extends GameResult, GS extends GameState<GM,GR>> void performPlayoutSimulation(GS playoutGameState) {
         SearchTreeIterator<GM,NR> iterator = searchTree.iterator();
         while (iterator.hasNext()) {
             String currentPlayerName = playoutGameState.getNextPlayerName();
@@ -80,11 +80,11 @@ public final class AMAFMonteCarloSearchService<GM extends GameMove, NR extends A
     }
 
     @Override
-    public void applyMove(GM move, GameState<GM, ? extends GameResult> resultingGameState) {
+    public <GR extends GameResult, GS extends GameState<GM,GR>> void applyMove(GM move, GS resultingGameState) {
         searchTree.advanceTree(move, resultingGameState);
     }
 
-    public void logMoveChoices(GameState<GM, ? extends GameResult> rootGameState) {
+    public <GR extends GameResult, GS extends GameState<GM,GR>> void logMoveChoices(GS rootGameState) {
         String evaluatingPlayerName = rootGameState.getNextPlayerName();
         LOGGER.debug("Top level moves considered by the AIService from {}'s perspective:", evaluatingPlayerName);
         SearchTreeIterator<GM,NR> iterator = searchTree.iterator();

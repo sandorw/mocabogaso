@@ -30,16 +30,6 @@ public class AMAFNodeResultsServiceTest {
         propagateAMAFGameResult(nodeResultsService, gameState, searchTree);
     }
     
-    @Test
-    public void propagateUnsafeAMAFGameResultTest() {
-        NodeResultsFactory<UnsafeTwoPlayerAMAFNodeResults> nodeResultsFactory = new UnsafeTwoPlayerAMAFNodeResultsFactory();
-        AMAFNodeResultsService<UnsafeTwoPlayerAMAFNodeResults> nodeResultsService = new AMAFNodeResultsService<>(nodeResultsFactory);
-        SimpleTestGameState gameState = new SimpleTestGameState();
-        MonteCarloSearchTree<DefaultGameMove,UnsafeTwoPlayerAMAFNodeResults> searchTree =
-                new MonteCarloSearchTree<>(nodeResultsService, gameState);
-        propagateAMAFGameResult(nodeResultsService, gameState, searchTree);
-    }
-    
     private <NR extends AMAFNodeResults> void propagateAMAFGameResult(AMAFNodeResultsService<NR> nodeResultsService, 
             SimpleTestGameState gameState, MonteCarloSearchTree<DefaultGameMove,NR> searchTree) {
         SearchTreeIterator<DefaultGameMove,NR> iterator = searchTree.iterator();

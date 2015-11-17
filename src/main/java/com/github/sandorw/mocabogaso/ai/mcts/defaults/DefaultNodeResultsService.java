@@ -26,12 +26,14 @@ public final class DefaultNodeResultsService<NR extends NodeResults> implements 
     }
     
     @Override
-    public <GM extends GameMove, GS extends GameState<GM, ? extends GameResult>> NR getNewNodeResults(GS gameState) {
-        return nodeResultsFactory.getNewNodeResults(gameState);
+    public <GM extends GameMove, GR extends GameResult, GS extends GameState<GM,GR>> 
+            NR getNewNodeResults(GM move, GS gameState) {
+        return nodeResultsFactory.getNewNodeResults(move, gameState);
     }
     
     @Override
-    public <GM extends GameMove> void propagateGameResult(GameResult gameResult, SearchTreeIterator<GM,NR> treeIterator) {
+    public <GM extends GameMove, GR extends GameResult> 
+            void propagateGameResult(GR gameResult, SearchTreeIterator<GM,NR> treeIterator) {
         Set<NR> nodeResultsSet = Sets.newIdentityHashSet();
         Deque<SearchTreeIterator<GM,NR>> iteratorDeque = Queues.newArrayDeque();
         iteratorDeque.push(treeIterator);

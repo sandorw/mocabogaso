@@ -2,6 +2,7 @@ package com.github.sandorw.mocabogaso.games.hex;
 
 import java.util.List;
 
+import com.github.sandorw.mocabogaso.ai.mcts.Heuristic;
 import com.github.sandorw.mocabogaso.games.GameState;
 import com.github.sandorw.mocabogaso.games.defaults.DefaultGameMove;
 import com.github.sandorw.mocabogaso.games.defaults.DefaultGameResult;
@@ -15,15 +16,16 @@ import com.google.common.collect.Lists;
  * @author sandorw
  */
 public final class HexGameState implements GameState<DefaultGameMove, DefaultGameResult> {
-    private BoardStatus[][] boardLocation;
-    private Group[][] groups;
-    private final int boardSize;
-    private String nextPlayerName;
-    private String winningPlayerName;
-    private long zobristHash;
-    private final MNKZobristHashService zobristHashService;
+    protected BoardStatus[][] boardLocation;
+    protected Group[][] groups;
+    protected final int boardSize;
+    protected String nextPlayerName;
+    protected String winningPlayerName;
+    protected long zobristHash;
+    protected final MNKZobristHashService zobristHashService;
+    protected final List<Heuristic<DefaultGameMove, DefaultGameResult>> heuristicList;
     
-    private enum BoardStatus {
+    protected enum BoardStatus {
         X(0),
         O(1),
         EMPTY(2);
@@ -49,10 +51,14 @@ public final class HexGameState implements GameState<DefaultGameMove, DefaultGam
     }
     
     public static HexGameState of(int boardSize) {
-        return new HexGameState(boardSize, new MNKZobristHashService(boardSize, boardSize));
+        List<Heuristic<DefaultGameMove, DefaultGameResult>> heuristics = Lists.newArrayList();
+        heuristics.add(new InitialStateHeuristic(5));
+        heuristics.add(new FirstLineHexHeuristic(10));
+        return new HexGameState(boardSize, new MNKZobristHashService(boardSize, boardSize), heuristics);
     }
     
-    private HexGameState(int boardSize, MNKZobristHashService hashService) {
+    private HexGameState(int boardSize, MNKZobristHashService hashService,
+            List<Heuristic<DefaultGameMove, DefaultGameResult>> heuristics) {
         if (boardSize < 2)
             throw new IllegalArgumentException("Board size must be greater than 1");
         this.boardSize = boardSize;
@@ -65,11 +71,12 @@ public final class HexGameState implements GameState<DefaultGameMove, DefaultGam
         winningPlayerName = "";
         zobristHash = 0L;
         zobristHashService = hashService;
+        heuristicList = heuristics;
     }
     
     @Override
     public GameState<DefaultGameMove, DefaultGameResult> getCopy() {
-        HexGameState copy = new HexGameState(boardSize, zobristHashService);
+        HexGameState copy = new HexGameState(boardSize, zobristHashService, heuristicList);
         for (int i=0; i < boardSize; ++i) {
             for (int j=0; j < boardSize; ++j) {
                 copy.boardLocation[i][j] = boardLocation[i][j];
@@ -147,11 +154,11 @@ public final class HexGameState implements GameState<DefaultGameMove, DefaultGam
         return boardLocation[i][j] == BoardStatus.EMPTY;
     }
     
-    private int getRowNumber(int location) {
+    protected int getRowNumber(int location) {
         return location/boardSize;
     }
 
-    private int getColNumber(int location) {
+    protected int getColNumber(int location) {
         return location%boardSize;
     }
 
@@ -296,5 +303,10 @@ public final class HexGameState implements GameState<DefaultGameMove, DefaultGam
             }
             return ((minBound == 0) && (maxBound == boardSize-1));
         }
+    }
+
+    @Override
+    public List<Heuristic<DefaultGameMove, DefaultGameResult>> getHeuristics() {
+        return heuristicList;
     }
 }

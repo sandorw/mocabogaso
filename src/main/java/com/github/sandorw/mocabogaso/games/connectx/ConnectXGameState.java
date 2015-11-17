@@ -16,7 +16,7 @@ public class ConnectXGameState extends MNKGameState {
     }
     
     private ConnectXGameState(int m, int n, int k, MNKZobristHashService hashService) {
-        super(m, n, k, hashService);
+        super(m, n, k, hashService, Lists.newArrayList());
     }
     
     @Override

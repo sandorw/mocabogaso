@@ -35,7 +35,7 @@ public final class DefaultNodeResultsServiceTest {
         GameState mockedGameState = mock(GameState.class);
         when(mockedGameState.getAllPlayerNames()).thenReturn(ImmutableList.of("Player 1", "Player 2"));
         @SuppressWarnings("unchecked")
-        DefaultNodeResults nodeResults = nodeResultsService.getNewNodeResults(mockedGameState);
+        DefaultNodeResults nodeResults = nodeResultsService.getNewNodeResults(null, mockedGameState);
         assertEquals(nodeResults.getNumSimulations(), 0);
         assertEquals(nodeResults.getValue("Player 1"), 0.0f, 0.001f);
         assertEquals(nodeResults.getValue("Player 2"), 0.0f, 0.001f);
