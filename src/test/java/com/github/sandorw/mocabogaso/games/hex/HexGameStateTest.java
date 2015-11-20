@@ -11,6 +11,7 @@ import org.junit.rules.ExpectedException;
 import com.github.sandorw.mocabogaso.Game;
 import com.github.sandorw.mocabogaso.games.GameResult;
 import com.github.sandorw.mocabogaso.games.defaults.DefaultGameMove;
+import com.github.sandorw.mocabogaso.games.defaults.DefaultGameResult;
 import com.github.sandorw.mocabogaso.players.PlayerFactory;
 
 /**
@@ -37,6 +38,7 @@ public class HexGameStateTest {
         gameState.applyMove(new DefaultGameMove("O", 3));
         copy.applyMove(new DefaultGameMove("O", 3));
         assertTrue(gameState.equals(copy));
+        assertEquals(gameState.hashCode(), copy.hashCode());
     }
     
     @Test
@@ -156,5 +158,82 @@ public class HexGameStateTest {
         assertTrue(game.isGameOver());
         GameResult gameResult = game.getGameResult();
         assertFalse(gameResult.isTie());
+    }
+    
+    /**
+     * Hex heuristic tests
+     */
+    
+    @Test
+    public void initialStateHeuristic_weightTest() {
+        InitialStateHeuristic heuristic = new InitialStateHeuristic(5);
+        assertEquals(heuristic.getWeight(), 5);
+    }
+    
+    @Test
+    public void initialStateHeuristic_isTieTest() {
+        InitialStateHeuristic heuristic = new InitialStateHeuristic(5);
+        HexGameState gameState = HexGameState.of(5);
+        for (DefaultGameMove move : gameState.getAllValidMoves()) {
+            assertTrue(heuristic.evaluateMove(move, gameState).isTie());
+        }
+    }
+    
+    @Test
+    public void firstLineHeuristic_weightTest() {
+        FirstLineHexHeuristic heuristic = new FirstLineHexHeuristic(5);
+        assertEquals(heuristic.getWeight(), 5);
+    }
+    
+    @Test
+    public void firstLineHeuristic_badFirstLinePlayTest() {
+        FirstLineHexHeuristic heuristic = new FirstLineHexHeuristic(5);
+        HexGameState gameState = HexGameState.of(5);
+        for (int i=0; i < 5; ++i) {
+            DefaultGameMove move = new DefaultGameMove("X", i);
+            DefaultGameResult gameResult = heuristic.evaluateMove(move, gameState);
+            assertFalse(gameResult.isTie());
+            assertEquals(gameResult.getWinningPlayer(), "O");
+        }
+        for (int i=20; i < 25; ++i) {
+            DefaultGameMove move = new DefaultGameMove("X", i);
+            DefaultGameResult gameResult = heuristic.evaluateMove(move, gameState);
+            assertFalse(gameResult.isTie());
+            assertEquals(gameResult.getWinningPlayer(), "O");
+        }
+        for (int i=0; i < 25; i += 5) {
+            DefaultGameMove move = new DefaultGameMove("X", i);
+            DefaultGameResult gameResult = heuristic.evaluateMove(move, gameState);
+            assertFalse(gameResult.isTie());
+            assertEquals(gameResult.getWinningPlayer(), "O");
+        }
+        for (int i=4; i < 25; i += 5) {
+            DefaultGameMove move = new DefaultGameMove("X", i);
+            DefaultGameResult gameResult = heuristic.evaluateMove(move, gameState);
+            assertFalse(gameResult.isTie());
+            assertEquals(gameResult.getWinningPlayer(), "O");
+        }
+    }
+    
+    @Test
+    public void firstLineHeuristic_goodFirstLinePlayTest() {
+        FirstLineHexHeuristic heuristic = new FirstLineHexHeuristic(5);
+        HexGameState gameState = HexGameState.of(5);
+        DefaultGameMove move = new DefaultGameMove("X", 6);
+        gameState.applyMove(move);
+        move = new DefaultGameMove("O", 11);
+        gameState.applyMove(move);
+        move = new DefaultGameMove("X", 1);
+        DefaultGameResult gameResult = heuristic.evaluateMove(move, gameState);
+        assertNull(gameResult);
+    }
+    
+    @Test
+    public void firstLineHeuristic_interiorPlayTest() {
+        FirstLineHexHeuristic heuristic = new FirstLineHexHeuristic(5);
+        HexGameState gameState = HexGameState.of(5);
+        DefaultGameMove move = new DefaultGameMove("X", 6);
+        DefaultGameResult gameResult = heuristic.evaluateMove(move, gameState);
+        assertNull(gameResult);
     }
 }

@@ -14,8 +14,8 @@ public final class DefaultNodeResultsFactory implements NodeResultsFactory<Defau
 
     @Override
     public <GM extends GameMove, GR extends GameResult, GS extends GameState<GM,GR>> 
-            DefaultNodeResults getNewNodeResults(GM move, GS gameState) {
-        return new DefaultNodeResults(gameState);
+            DefaultNodeResults getNewNodeResults(GM move, GS initialGameState) {
+        return new DefaultNodeResults(initialGameState);
     }
 
 }

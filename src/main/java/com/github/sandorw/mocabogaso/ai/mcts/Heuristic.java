@@ -14,7 +14,7 @@ public interface Heuristic<GM extends GameMove, GR extends GameResult> {
 
     int getWeight();
 
-    <GS extends GameState<GM,GR>> GR evaluateMove(GM move, GS resultingGameState);
+    <GS extends GameState<GM,GR>> GR evaluateMove(GM move, GS initialGameState);
     
     <GS extends GameState<GM,GR>> GM suggestPlayoutMove(GS gameState);
     

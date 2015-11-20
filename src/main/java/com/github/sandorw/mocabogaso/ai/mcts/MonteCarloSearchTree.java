@@ -78,11 +78,11 @@ public final class MonteCarloSearchTree<GM extends GameMove, NR extends NodeResu
 		private final NR nodeResults;
 		
         private <GR extends GameResult, GS extends GameState<GM,GR>>
-        		SearchTreeNode(GM move, GS resultingGameState) {
+        		SearchTreeNode(GM move, GS initialGameState) {
             parentNodes = Lists.newArrayList();
         	expanded = false;
         	childNodes = Lists.newArrayList();
-        	nodeResults = nodeResultsService.getNewNodeResults(move, resultingGameState);
+        	nodeResults = nodeResultsService.getNewNodeResults(move, initialGameState);
         }
         
         private void addParentNode(GM moveMade, SearchTreeNode parent) {
@@ -119,7 +119,7 @@ public final class MonteCarloSearchTree<GM extends GameMove, NR extends NodeResu
                         childNode = transpositionTable.get(zobristHash);
                     }
                     if (childNode == null) {
-                        childNode = new SearchTreeNode(move, resultingGameState);
+                        childNode = new SearchTreeNode(move, gameState);
                         transpositionTable.put(zobristHash, childNode);
                     }
                     childNode.addParentNode(move, this);
