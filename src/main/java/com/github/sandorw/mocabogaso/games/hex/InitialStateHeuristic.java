@@ -24,7 +24,7 @@ public class InitialStateHeuristic implements Heuristic<DefaultGameMove, Default
 
     @Override
     public <GS extends GameState<DefaultGameMove, DefaultGameResult>> DefaultGameResult 
-            evaluateMove(DefaultGameMove move, GS gameState) {
+            evaluateMove(DefaultGameMove move, GS initialGameState) {
         return new DefaultGameResult(null, true);
     }
 

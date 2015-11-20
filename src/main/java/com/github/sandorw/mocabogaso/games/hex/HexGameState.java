@@ -106,6 +106,10 @@ public final class HexGameState implements GameState<DefaultGameMove, DefaultGam
     public String getNextPlayerName() {
         return nextPlayerName;
     }
+    
+    public String getLastPlayerName() {
+        return (nextPlayerName.equals("X") ? "O" : "X");
+    }
 
     @Override
     public List<String> getAllPlayerNames() {
@@ -201,7 +205,7 @@ public final class HexGameState implements GameState<DefaultGameMove, DefaultGam
     }
     
     private void toggleCurrentPlayer() {
-        nextPlayerName = (nextPlayerName == "X" ? "O" : "X");
+        nextPlayerName = (nextPlayerName.equals("X") ? "O" : "X");
     }
 
     @Override

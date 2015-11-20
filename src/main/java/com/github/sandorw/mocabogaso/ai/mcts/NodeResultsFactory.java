@@ -11,6 +11,6 @@ import com.github.sandorw.mocabogaso.games.GameState;
  */
 public interface NodeResultsFactory<NR extends NodeResults> {
 
-    <GM extends GameMove, GR extends GameResult, GS extends GameState<GM,GR>> NR getNewNodeResults(GM move, GS gameState);
+    <GM extends GameMove, GR extends GameResult, GS extends GameState<GM,GR>> NR getNewNodeResults(GM move, GS initialGameState);
     
 }

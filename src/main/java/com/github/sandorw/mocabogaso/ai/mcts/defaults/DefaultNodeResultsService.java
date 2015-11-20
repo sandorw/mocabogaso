@@ -27,8 +27,8 @@ public final class DefaultNodeResultsService<NR extends NodeResults> implements 
     
     @Override
     public <GM extends GameMove, GR extends GameResult, GS extends GameState<GM,GR>> 
-            NR getNewNodeResults(GM move, GS gameState) {
-        return nodeResultsFactory.getNewNodeResults(move, gameState);
+            NR getNewNodeResults(GM move, GS initialGameState) {
+        return nodeResultsFactory.getNewNodeResults(move, initialGameState);
     }
     
     @Override

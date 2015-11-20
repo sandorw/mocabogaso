@@ -20,11 +20,11 @@ public class FirstLineHexHeuristic implements Heuristic<DefaultGameMove, Default
 
     @Override
     public <GS extends GameState<DefaultGameMove, DefaultGameResult>> DefaultGameResult 
-            evaluateMove(DefaultGameMove move, GS resultingGameState) {
+            evaluateMove(DefaultGameMove move, GS initialGameState) {
         if (move == null) {
             return null;
         }
-        HexGameState hexGameState = (HexGameState) resultingGameState;
+        HexGameState hexGameState = (HexGameState) initialGameState;
         int rowIndex = hexGameState.getRowNumber(move.getLocation());
         int colIndex = hexGameState.getColNumber(move.getLocation());
         int boardSize = hexGameState.boardSize;
@@ -56,7 +56,7 @@ public class FirstLineHexHeuristic implements Heuristic<DefaultGameMove, Default
             hasNeighbor = true;
         }
         if (!hasNeighbor) {
-            return new DefaultGameResult(hexGameState.nextPlayerName, false);
+            return new DefaultGameResult(hexGameState.getLastPlayerName(), false);
         }
         return null;
     }

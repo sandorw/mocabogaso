@@ -15,10 +15,10 @@ public class AMAFHeuristicNodeResultsFactory implements NodeResultsFactory<AMAFH
 
     @Override
     public <GM extends GameMove, GR extends GameResult, GS extends GameState<GM,GR>> 
-            AMAFHeuristicNodeResults getNewNodeResults(GM move, GS gameState) {
-        AMAFHeuristicNodeResults nodeResults = new AMAFHeuristicNodeResults(gameState);
-        for (Heuristic<GM,GR> heuristic : gameState.getHeuristics()) {
-            GameResult heuristicGameResult = heuristic.evaluateMove(move, gameState);
+            AMAFHeuristicNodeResults getNewNodeResults(GM move, GS initialGameState) {
+        AMAFHeuristicNodeResults nodeResults = new AMAFHeuristicNodeResults(initialGameState);
+        for (Heuristic<GM,GR> heuristic : initialGameState.getHeuristics()) {
+            GameResult heuristicGameResult = heuristic.evaluateMove(move, initialGameState);
             if (heuristicGameResult != null) {
                 nodeResults.applyVirtualGameResult(heuristicGameResult, heuristic.getWeight());
             }
