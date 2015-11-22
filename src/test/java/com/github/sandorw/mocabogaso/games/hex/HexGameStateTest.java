@@ -181,13 +181,13 @@ public class HexGameStateTest {
     
     @Test
     public void firstLineHeuristic_weightTest() {
-        FirstLineHexHeuristic heuristic = new FirstLineHexHeuristic(5);
+        FirstLineHeuristic heuristic = new FirstLineHeuristic(5);
         assertEquals(heuristic.getWeight(), 5);
     }
     
     @Test
     public void firstLineHeuristic_badFirstLinePlayTest() {
-        FirstLineHexHeuristic heuristic = new FirstLineHexHeuristic(5);
+        FirstLineHeuristic heuristic = new FirstLineHeuristic(5);
         HexGameState gameState = HexGameState.of(5);
         for (int i=0; i < 5; ++i) {
             DefaultGameMove move = new DefaultGameMove("X", i);
@@ -217,7 +217,7 @@ public class HexGameStateTest {
     
     @Test
     public void firstLineHeuristic_goodFirstLinePlayTest() {
-        FirstLineHexHeuristic heuristic = new FirstLineHexHeuristic(5);
+        FirstLineHeuristic heuristic = new FirstLineHeuristic(5);
         HexGameState gameState = HexGameState.of(5);
         DefaultGameMove move = new DefaultGameMove("X", 6);
         gameState.applyMove(move);
@@ -230,7 +230,7 @@ public class HexGameStateTest {
     
     @Test
     public void firstLineHeuristic_interiorPlayTest() {
-        FirstLineHexHeuristic heuristic = new FirstLineHexHeuristic(5);
+        FirstLineHeuristic heuristic = new FirstLineHeuristic(5);
         HexGameState gameState = HexGameState.of(5);
         DefaultGameMove move = new DefaultGameMove("X", 6);
         DefaultGameResult gameResult = heuristic.evaluateMove(move, gameState);

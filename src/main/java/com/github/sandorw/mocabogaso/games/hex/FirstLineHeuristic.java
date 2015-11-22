@@ -6,10 +6,15 @@ import com.github.sandorw.mocabogaso.games.defaults.DefaultGameMove;
 import com.github.sandorw.mocabogaso.games.defaults.DefaultGameResult;
 import com.github.sandorw.mocabogaso.games.hex.HexGameState.BoardStatus;
 
-public class FirstLineHexHeuristic implements Heuristic<DefaultGameMove, DefaultGameResult> {
+/**
+ * Heuristic to discourage exploring unforced or unnecessary moves on the perimeter of the board.
+ * 
+ * @author sandorw
+ */
+public class FirstLineHeuristic implements Heuristic<DefaultGameMove, DefaultGameResult> {
     private int weight;
     
-    public FirstLineHexHeuristic(int weight) {
+    public FirstLineHeuristic(int weight) {
         this.weight = weight;
     }
     
