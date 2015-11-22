@@ -236,4 +236,55 @@ public class HexGameStateTest {
         DefaultGameResult gameResult = heuristic.evaluateMove(move, gameState);
         assertNull(gameResult);
     }
+    
+    @Test
+    public void oneSpaceHopHeuristic_weightTest() {
+        OneSpaceHopHeuristic heuristic = new OneSpaceHopHeuristic(5);
+        assertEquals(heuristic.getWeight(), 5);
+    }
+    
+    @Test
+    public void oneSpaceHopHeuristic_positiveTest() {
+        OneSpaceHopHeuristic heuristic = new OneSpaceHopHeuristic(5);
+        HexGameState gameState = HexGameState.of(5);
+        DefaultGameMove move = new DefaultGameMove("X", 12);
+        gameState.applyMove(move);
+        move = new DefaultGameMove("X", 1);
+        DefaultGameResult gameResult = heuristic.evaluateMove(move, gameState);
+        assertFalse(gameResult.isTie());
+        assertEquals(gameResult.getWinningPlayer(), "X");
+        move = new DefaultGameMove("X", 8);
+        gameResult = heuristic.evaluateMove(move, gameState);
+        assertFalse(gameResult.isTie());
+        assertEquals(gameResult.getWinningPlayer(), "X");
+        move = new DefaultGameMove("X", 19);
+        gameResult = heuristic.evaluateMove(move, gameState);
+        assertFalse(gameResult.isTie());
+        assertEquals(gameResult.getWinningPlayer(), "X");
+        move = new DefaultGameMove("X", 23);
+        gameResult = heuristic.evaluateMove(move, gameState);
+        assertFalse(gameResult.isTie());
+        assertEquals(gameResult.getWinningPlayer(), "X");
+        move = new DefaultGameMove("X", 16);
+        gameResult = heuristic.evaluateMove(move, gameState);
+        assertFalse(gameResult.isTie());
+        assertEquals(gameResult.getWinningPlayer(), "X");
+        move = new DefaultGameMove("X", 5);
+        gameResult = heuristic.evaluateMove(move, gameState);
+        assertFalse(gameResult.isTie());
+        assertEquals(gameResult.getWinningPlayer(), "X");
+    }
+    
+    @Test
+    public void oneSpaceHopHeuristic_negativeTest() {
+        OneSpaceHopHeuristic heuristic = new OneSpaceHopHeuristic(5);
+        HexGameState gameState = HexGameState.of(5);
+        DefaultGameMove move = new DefaultGameMove("X", 12);
+        gameState.applyMove(move);
+        move = new DefaultGameMove("O", 6);
+        gameState.applyMove(move);
+        move = new DefaultGameMove("X", 1);
+        DefaultGameResult gameResult = heuristic.evaluateMove(move, gameState);
+        assertNull(gameResult);
+    }
 }
