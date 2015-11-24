@@ -56,8 +56,9 @@ public final class HexGameState implements GameState<DefaultGameMove, DefaultGam
     public static HexGameState of(int boardSize) {
         List<Heuristic<DefaultGameMove, DefaultGameResult>> heuristics = Lists.newArrayList();
         heuristics.add(new InitialStateHeuristic(5));
-        heuristics.add(new FirstLineHeuristic(10));
+        heuristics.add(new FirstLineHeuristic(15));
         heuristics.add(new OneSpaceHopHeuristic(10));
+        heuristics.add(new SecureConnectionHeuristic(15));
         return new HexGameState(boardSize, new MNKZobristHashService(boardSize, boardSize), heuristics);
     }
     
