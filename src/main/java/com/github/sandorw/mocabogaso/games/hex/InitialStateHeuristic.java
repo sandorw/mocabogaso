@@ -6,7 +6,8 @@ import com.github.sandorw.mocabogaso.games.defaults.DefaultGameMove;
 import com.github.sandorw.mocabogaso.games.defaults.DefaultGameResult;
 
 /**
- * Heuristic for 
+ * Heuristic for setting the initial state of NodeResults to make sure the first few simulations
+ * don't skew the value too significantly.
  * 
  * @author sandorw
  */

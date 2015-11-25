@@ -50,10 +50,15 @@ public final class HexGameState implements GameState<DefaultGameMove, DefaultGam
         }
     }
     
+    public static final List<Integer> neighborRowDelta = ImmutableList.of(1, 1, 0, -1, -1, 0);
+    public static final List<Integer> neighborColDelta = ImmutableList.of(0, 1, 1, 0, -1, -1);
+    
     public static HexGameState of(int boardSize) {
         List<Heuristic<DefaultGameMove, DefaultGameResult>> heuristics = Lists.newArrayList();
         heuristics.add(new InitialStateHeuristic(5));
-        heuristics.add(new FirstLineHexHeuristic(10));
+        heuristics.add(new FirstLineHeuristic(15));
+        heuristics.add(new OneSpaceHopHeuristic(10));
+        heuristics.add(new SecureConnectionHeuristic(15));
         return new HexGameState(boardSize, new MNKZobristHashService(boardSize, boardSize), heuristics);
     }
     
@@ -152,10 +157,14 @@ public final class HexGameState implements GameState<DefaultGameMove, DefaultGam
     public boolean isValidMove(DefaultGameMove move) {
         int i = getRowNumber(move.getLocation());
         int j = getColNumber(move.getLocation());
-        if ((i < 0) || (j < 0) || (i >= boardSize) || (j >= boardSize) || 
+        if (!isIndexInBounds(i) || !isIndexInBounds(j) || 
                 (!move.getPlayerName().equals(nextPlayerName)))
             return false;
         return boardLocation[i][j] == BoardStatus.EMPTY;
+    }
+    
+    public boolean isIndexInBounds(int index) {
+        return (index >= 0) && (index < boardSize);
     }
     
     protected int getRowNumber(int location) {
@@ -173,20 +182,16 @@ public final class HexGameState implements GameState<DefaultGameMove, DefaultGam
         BoardStatus newStatus = (move.getPlayerName().equals("X") ? BoardStatus.X : BoardStatus.O);
         boardLocation[i][j] = newStatus;
         groups[i][j] = new Group(i,j,newStatus);
-        checkAndJoinNeighboringGroups(i,j,i+1,j);
-        checkAndJoinNeighboringGroups(i,j,i+1,j+1);
-        checkAndJoinNeighboringGroups(i,j,i,j-1);
-        checkAndJoinNeighboringGroups(i,j,i,j+1);
-        checkAndJoinNeighboringGroups(i,j,i-1,j-1);
-        checkAndJoinNeighboringGroups(i,j,i-1,j);
+        for (int k=0; k < 6; ++k) {
+            checkAndJoinNeighboringGroups(i,j,i+neighborRowDelta.get(k),j+neighborColDelta.get(k));
+        }
         zobristHash ^= zobristHashService.getLocationHash(i,j,newStatus.getIndex());
         toggleCurrentPlayer();
     }
     
     private void checkAndJoinNeighboringGroups(int i, int j, int neighborRow, int neighborCol) {
-        if ((neighborRow >= 0) && (neighborRow < boardSize) && 
-                (neighborCol >= 0) && (neighborCol < boardSize) &&
-                (boardLocation[i][j] == boardLocation[neighborRow][neighborCol])) {
+        if (isIndexInBounds(neighborRow) && isIndexInBounds(neighborCol)
+                && (boardLocation[i][j] == boardLocation[neighborRow][neighborCol])) {
             addAllToGroup(groups[i][j], groups[neighborRow][neighborCol]);
         }
     }
@@ -280,7 +285,7 @@ public final class HexGameState implements GameState<DefaultGameMove, DefaultGam
         return (int) ((zobristHash >>> 32) ^ ((zobristHash & 0xFFFF0000) >>> 32));
     }
 
-    private final class Group {
+    protected final class Group {
         private int minBound;
         private int maxBound;
         

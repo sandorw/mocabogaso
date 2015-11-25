@@ -181,13 +181,13 @@ public class HexGameStateTest {
     
     @Test
     public void firstLineHeuristic_weightTest() {
-        FirstLineHexHeuristic heuristic = new FirstLineHexHeuristic(5);
+        FirstLineHeuristic heuristic = new FirstLineHeuristic(5);
         assertEquals(heuristic.getWeight(), 5);
     }
     
     @Test
     public void firstLineHeuristic_badFirstLinePlayTest() {
-        FirstLineHexHeuristic heuristic = new FirstLineHexHeuristic(5);
+        FirstLineHeuristic heuristic = new FirstLineHeuristic(5);
         HexGameState gameState = HexGameState.of(5);
         for (int i=0; i < 5; ++i) {
             DefaultGameMove move = new DefaultGameMove("X", i);
@@ -217,7 +217,7 @@ public class HexGameStateTest {
     
     @Test
     public void firstLineHeuristic_goodFirstLinePlayTest() {
-        FirstLineHexHeuristic heuristic = new FirstLineHexHeuristic(5);
+        FirstLineHeuristic heuristic = new FirstLineHeuristic(5);
         HexGameState gameState = HexGameState.of(5);
         DefaultGameMove move = new DefaultGameMove("X", 6);
         gameState.applyMove(move);
@@ -230,10 +230,184 @@ public class HexGameStateTest {
     
     @Test
     public void firstLineHeuristic_interiorPlayTest() {
-        FirstLineHexHeuristic heuristic = new FirstLineHexHeuristic(5);
+        FirstLineHeuristic heuristic = new FirstLineHeuristic(5);
         HexGameState gameState = HexGameState.of(5);
         DefaultGameMove move = new DefaultGameMove("X", 6);
         DefaultGameResult gameResult = heuristic.evaluateMove(move, gameState);
         assertNull(gameResult);
+    }
+    
+    @Test
+    public void oneSpaceHopHeuristic_weightTest() {
+        OneSpaceHopHeuristic heuristic = new OneSpaceHopHeuristic(5);
+        assertEquals(heuristic.getWeight(), 5);
+    }
+    
+    @Test
+    public void oneSpaceHopHeuristic_positiveTest() {
+        OneSpaceHopHeuristic heuristic = new OneSpaceHopHeuristic(5);
+        HexGameState gameState = HexGameState.of(5);
+        DefaultGameMove move = new DefaultGameMove("X", 12);
+        gameState.applyMove(move);
+        move = new DefaultGameMove("X", 1);
+        DefaultGameResult gameResult = heuristic.evaluateMove(move, gameState);
+        assertFalse(gameResult.isTie());
+        assertEquals(gameResult.getWinningPlayer(), "X");
+        move = new DefaultGameMove("X", 8);
+        gameResult = heuristic.evaluateMove(move, gameState);
+        assertFalse(gameResult.isTie());
+        assertEquals(gameResult.getWinningPlayer(), "X");
+        move = new DefaultGameMove("X", 19);
+        gameResult = heuristic.evaluateMove(move, gameState);
+        assertFalse(gameResult.isTie());
+        assertEquals(gameResult.getWinningPlayer(), "X");
+        move = new DefaultGameMove("X", 23);
+        gameResult = heuristic.evaluateMove(move, gameState);
+        assertFalse(gameResult.isTie());
+        assertEquals(gameResult.getWinningPlayer(), "X");
+        move = new DefaultGameMove("X", 16);
+        gameResult = heuristic.evaluateMove(move, gameState);
+        assertFalse(gameResult.isTie());
+        assertEquals(gameResult.getWinningPlayer(), "X");
+        move = new DefaultGameMove("X", 5);
+        gameResult = heuristic.evaluateMove(move, gameState);
+        assertFalse(gameResult.isTie());
+        assertEquals(gameResult.getWinningPlayer(), "X");
+    }
+    
+    @Test
+    public void oneSpaceHopHeuristic_negativeTest() {
+        OneSpaceHopHeuristic heuristic = new OneSpaceHopHeuristic(5);
+        HexGameState gameState = HexGameState.of(5);
+        DefaultGameMove move = new DefaultGameMove("X", 12);
+        gameState.applyMove(move);
+        move = new DefaultGameMove("O", 6);
+        gameState.applyMove(move);
+        move = new DefaultGameMove("X", 1);
+        DefaultGameResult gameResult = heuristic.evaluateMove(move, gameState);
+        assertNull(gameResult);
+    }
+    
+    @Test
+    public void secureConnectionHeuristic_weightTest() {
+        SecureConnectionHeuristic heuristic = new SecureConnectionHeuristic(5);
+        assertEquals(heuristic.getWeight(), 5);
+    }
+    
+    @Test
+    public void secureConnectionHeuristic_directOppositeLinkTest() {
+        SecureConnectionHeuristic heuristic = new SecureConnectionHeuristic(5);
+        HexGameState gameState = HexGameState.of(5);
+        DefaultGameMove move = new DefaultGameMove("X", 6);
+        gameState.applyMove(move);
+        move = new DefaultGameMove("X", 18);
+        gameState.applyMove(move);
+        move = new DefaultGameMove("X", 12);
+        DefaultGameResult gameResult = heuristic.evaluateMove(move, gameState);
+        assertFalse(gameResult.isTie());
+        assertEquals(gameResult.getWinningPlayer(), "X");
+    }
+    
+    @Test
+    public void secureConnectionHeuristic_threeAlliesTest() {
+        SecureConnectionHeuristic heuristic = new SecureConnectionHeuristic(5);
+        HexGameState gameState = HexGameState.of(5);
+        DefaultGameMove move = new DefaultGameMove("X", 6);
+        gameState.applyMove(move);
+        move = new DefaultGameMove("X", 18);
+        gameState.applyMove(move);
+        move = new DefaultGameMove("X", 17);
+        gameState.applyMove(move);
+        move = new DefaultGameMove("X", 12);
+        DefaultGameResult gameResult = heuristic.evaluateMove(move, gameState);
+        assertNull(gameResult);
+    }
+    
+    @Test
+    public void secureConnectionHeuristic_noEnemyLinkTest() {
+        SecureConnectionHeuristic heuristic = new SecureConnectionHeuristic(5);
+        HexGameState gameState = HexGameState.of(5);
+        DefaultGameMove move = new DefaultGameMove("X", 6);
+        gameState.applyMove(move);
+        move = new DefaultGameMove("X", 17);
+        gameState.applyMove(move);
+        move = new DefaultGameMove("X", 12);
+        DefaultGameResult gameResult = heuristic.evaluateMove(move, gameState);
+        assertNull(gameResult);
+    }
+    
+    @Test
+    public void secureConnectionHeuristic_forcedLinkTest() {
+        SecureConnectionHeuristic heuristic = new SecureConnectionHeuristic(5);
+        HexGameState gameState = HexGameState.of(5);
+        DefaultGameMove move = new DefaultGameMove("X", 6);
+        gameState.applyMove(move);
+        move = new DefaultGameMove("X", 17);
+        gameState.applyMove(move);
+        move = new DefaultGameMove("O", 11);
+        gameState.applyMove(move);
+        move = new DefaultGameMove("X", 12);
+        DefaultGameResult gameResult = heuristic.evaluateMove(move, gameState);
+        assertFalse(gameResult.isTie());
+        assertEquals(gameResult.getWinningPlayer(), "X");
+    }
+    
+    @Test
+    public void secureConnectionHeuristic_unforcedLinkTest() {
+        SecureConnectionHeuristic heuristic = new SecureConnectionHeuristic(5);
+        HexGameState gameState = HexGameState.of(5);
+        DefaultGameMove move = new DefaultGameMove("X", 6);
+        gameState.applyMove(move);
+        move = new DefaultGameMove("X", 17);
+        gameState.applyMove(move);
+        move = new DefaultGameMove("X", 18);
+        gameState.applyMove(move);
+        move = new DefaultGameMove("O", 13);
+        gameState.applyMove(move);
+        move = new DefaultGameMove("X", 12);
+        DefaultGameResult gameResult = heuristic.evaluateMove(move, gameState);
+        assertNull(gameResult);
+    }
+    
+    @Test
+    public void secureConnectionHeuristic_wrapAroundGroupTest() {
+        SecureConnectionHeuristic heuristic = new SecureConnectionHeuristic(5);
+        HexGameState gameState = HexGameState.of(5);
+        DefaultGameMove move = new DefaultGameMove("X", 6);
+        gameState.applyMove(move);
+        move = new DefaultGameMove("X", 13);
+        gameState.applyMove(move);
+        move = new DefaultGameMove("X", 17);
+        gameState.applyMove(move);
+        move = new DefaultGameMove("X", 23);
+        gameState.applyMove(move);
+        move = new DefaultGameMove("X", 24);
+        gameState.applyMove(move);
+        move = new DefaultGameMove("X", 19);
+        gameState.applyMove(move);
+        move = new DefaultGameMove("O", 11);
+        gameState.applyMove(move);
+        move = new DefaultGameMove("O", 7);
+        gameState.applyMove(move);
+        move = new DefaultGameMove("X", 12);
+        DefaultGameResult gameResult = heuristic.evaluateMove(move, gameState);
+        assertFalse(gameResult.isTie());
+        assertEquals(gameResult.getWinningPlayer(), "X");
+    }
+    
+    @Test
+    public void secureConnectionHeuristic_cornerTest() {
+        SecureConnectionHeuristic heuristic = new SecureConnectionHeuristic(5);
+        HexGameState gameState = HexGameState.of(5);
+        DefaultGameMove move = new DefaultGameMove("X", 1);
+        gameState.applyMove(move);
+        move = new DefaultGameMove("X", 5);
+        gameState.applyMove(move);
+        move = new DefaultGameMove("O", 6);
+        gameState.applyMove(move);
+        move = new DefaultGameMove("X", 0);
+        DefaultGameResult gameResult = heuristic.evaluateMove(move, gameState);
+        assertFalse(gameResult.isTie());
+        assertEquals(gameResult.getWinningPlayer(), "X");
     }
 }
