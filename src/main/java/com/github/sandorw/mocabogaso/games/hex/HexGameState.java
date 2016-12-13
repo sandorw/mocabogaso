@@ -43,7 +43,7 @@ public final class HexGameState implements GameState<DefaultGameMove, DefaultGam
         @Override
         public String toString() {
             if (this == EMPTY)
-                return " ";
+                return ".";
             if (this == X)
                 return "X";
             return "O";
